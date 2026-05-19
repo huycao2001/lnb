@@ -344,24 +344,13 @@
             <p class="eyebrow" id="selectedLevelLabel">Easy level</p>
             <strong>Test 1</strong>
             <span id="selectedTestSummary">Five minimal-pair questions with audio.</span>
-            <a class="primary-btn" id="testLink" href="/phoneme/test1?level=easy">Open test</a>
+            <a class="primary-btn" id="testLink" href="test1?level=easy">Open test</a>
           </article>
         </div>
       </section>
     </div>
 
     <script>
-      if (
-        window.location.pathname === "/phoneme" &&
-        !window.location.pathname.endsWith("/")
-      ) {
-        history.replaceState(
-          null,
-          "",
-          `/phoneme/${window.location.search}${window.location.hash}`
-        );
-      }
-
       const testsByLevel = {
         easy: {
           label: "Easy level",
@@ -386,7 +375,7 @@
         const test = testsByLevel[level];
         selectedLevelLabel.textContent = test.label;
         selectedTestSummary.textContent = test.summary;
-        testLink.href = `/phoneme/test1?level=${level}`;
+        testLink.href = `test1?level=${level}`;
 
         tabs.forEach((item) => {
           item.classList.toggle("active", item.dataset.level === level);

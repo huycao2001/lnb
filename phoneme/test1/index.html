@@ -694,9 +694,18 @@
           .join("/");
       }
 
+      function getAppBasePath() {
+        const parts = window.location.pathname.split("/").filter(Boolean);
+        const moduleIndex = parts.indexOf("phoneme");
+        if (moduleIndex <= 0) {
+          return "";
+        }
+        return `/${parts.slice(0, moduleIndex).join("/")}`;
+      }
+
       function resolveAudioUrl(filename) {
         const base = AUDIO_DIRS[level] || AUDIO_DIRS.easy;
-        return `/${encodePath(base)}/${encodeURIComponent(filename)}`;
+        return `${getAppBasePath()}/${encodePath(base)}/${encodeURIComponent(filename)}`;
       }
 
       function setAudioSource(filename) {
@@ -748,7 +757,7 @@
           setResultPanel(
             "is-wrong",
             "Audio could not play",
-            "Run your local server from the project root, then open /phoneme/test1?level=easy"
+            "Run your local server from the project root, then open the phoneme test page."
           );
           return;
         }
