@@ -388,7 +388,9 @@
         });
       });
 
-      selectLevel("easy");
+      const params = new URLSearchParams(window.location.search);
+      const initialLevel = testsByLevel[params.get("level")] ? params.get("level") : "easy";
+      selectLevel(initialLevel);
     </script>
   </body>
 </html>

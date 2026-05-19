@@ -488,9 +488,24 @@
         medium: {
           label: "Medium level - Test 1",
           title: "Information gap dictation",
-          prompt: "Fill in the missing phrase: The meeting starts at ____.",
-          answer: "half past nine",
-          ready: "Listen for the missing time phrase and type only that phrase.",
+          questions: [
+            {
+              prompt: "The winter finally ___________________.",
+              audio: "dict med1.mp3",
+              answer: "stopped",
+            },
+            {
+              prompt: "I kill ___________________.",
+              audio: "dict med2.mp3",
+              answer: "the weeds in my garden",
+            },
+            {
+              prompt: "The Bright family ___________________.",
+              audio: "dict med3.mp3",
+              answer: "had a campfire on Friday",
+            },
+          ],
+          ready: "Listen to the audio, then type the missing word or phrase.",
           complete: "Correct. The missing phrase is accurate.",
         },
         hard: {
@@ -512,7 +527,15 @@
           `${window.location.pathname}?${params.toString()}${window.location.hash}`
         );
       }
-      const level = tests[params.get("level")] ? params.get("level") : "easy";
+      if (params.has("level") && !tests[params.get("level")]) {
+        params.set("level", "easy");
+        window.history.replaceState(
+          null,
+          "",
+          `${window.location.pathname}?${params.toString()}${window.location.hash}`
+        );
+      }
+      const level = params.get("level");
       const test = tests[level];
       const questionActions = document.querySelector("#questionActions");
       const submittedActions = document.querySelector("#submittedActions");
