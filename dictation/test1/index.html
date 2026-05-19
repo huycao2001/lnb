@@ -138,6 +138,13 @@
         line-height: 1;
       }
 
+      .progress {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 15px;
+        font-weight: 700;
+      }
+
       .audio-zone {
         margin-top: 26px;
         padding: 18px;
@@ -173,6 +180,31 @@
         width: 7px;
         border-radius: 999px;
         background: rgba(20, 108, 99, 0.62);
+      }
+
+      .wave.playing span:nth-child(1) {
+        animation: pulse 0.55s ease-in-out infinite alternate;
+      }
+
+      .wave.playing span:nth-child(2) {
+        animation: pulse 0.55s ease-in-out 0.1s infinite alternate;
+      }
+
+      .wave.playing span:nth-child(3) {
+        animation: pulse 0.55s ease-in-out 0.2s infinite alternate;
+      }
+
+      .wave.playing span:nth-child(4) {
+        animation: pulse 0.55s ease-in-out 0.3s infinite alternate;
+      }
+
+      @keyframes pulse {
+        from {
+          height: 14px;
+        }
+        to {
+          height: 38px;
+        }
       }
 
       .wave span:nth-child(1) {
@@ -228,7 +260,13 @@
       .actions {
         margin-top: 14px;
         display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
         justify-content: flex-end;
+      }
+
+      .actions[hidden] {
+        display: none;
       }
 
       .feedback-panel,
@@ -260,6 +298,12 @@
       .result-panel.final {
         border-color: rgba(21, 115, 71, 0.35);
         background: #effaf3;
+      }
+
+      .result-panel.correct {
+        border-color: rgba(21, 115, 71, 0.45);
+        background: #effaf3;
+        color: var(--success);
       }
 
       .result-panel h2 {
@@ -360,24 +404,43 @@
       <main class="test-panel" aria-label="Dictation test question">
         <p class="eyebrow" id="levelLabel">Easy level - Test 1</p>
         <h1 id="testTitle">Word-by-word dictation</h1>
+        <p class="progress" id="progressText">Question 1 of 1</p>
 
         <div class="audio-zone">
-          <button class="icon-btn" type="button" aria-label="Play audio">
+          <button class="icon-btn" type="button" id="playButton" aria-label="Play audio">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M8 5v14l11-7L8 5Z" fill="currentColor" />
             </svg>
           </button>
-          <div class="wave" aria-hidden="true">
+          <div class="wave" id="wave" aria-hidden="true">
             <span></span><span></span><span></span><span></span>
           </div>
-          <button class="replay" type="button">Replay audio</button>
+          <button class="replay" type="button" id="replayButton">Replay audio</button>
         </div>
 
         <p class="prompt" id="promptText">Type the word you hear.</p>
-        <textarea class="answer-input" id="answerInput" aria-label="Dictation answer"></textarea>
+        <textarea
+          class="answer-input"
+          id="answerInput"
+          aria-label="Dictation answer"
+          placeholder="Type your answer here"
+        ></textarea>
 
-        <div class="actions">
+        <div class="actions" id="questionActions">
+          <button class="primary-btn" type="button" id="prevButton" disabled>
+            Previous question
+          </button>
           <button class="primary-btn" type="button" id="checkButton">Check answer</button>
+          <button class="primary-btn" type="button" id="nextButton">
+            Next question
+          </button>
+          <button class="primary-btn" type="button" id="submitTestButton">
+            Submit test
+          </button>
+        </div>
+
+        <div class="actions" id="submittedActions" hidden>
+          <a class="primary-btn" href="../../dictation.html">Back to tests</a>
         </div>
 
         <div class="feedback-panel" aria-live="polite">
@@ -389,14 +452,37 @@
       </main>
     </div>
 
+    <audio id="questionAudio" preload="metadata" playsinline></audio>
+
     <script>
+      const AUDIO_DIRS = {
+        easy: "audio/Dictation/Easy (A1-A2)",
+        medium: "audio/Dictation/Medium (B1-B2)",
+        hard: "audio/Dictation/Hard (C1)",
+      };
+
       const tests = {
         easy: {
           label: "Easy level - Test 1",
-          title: "Word-by-word dictation",
-          prompt: "Type the word you hear.",
-          answer: "morning",
-          ready: "Listen to the word, then type it exactly.",
+          title: "Easy word dictation",
+          questions: [
+            {
+              prompt: "Listen to the talk and type the word that you hear.",
+              audio: "easy 1.mp3",
+              answer: "Sophia",
+            },
+            {
+              prompt: "Listen to the talk and type the word that you hear.",
+              audio: "easy 2.mp3",
+              answer: "7044",
+            },
+            {
+              prompt: "Listen to the talk and type the word that you hear.",
+              audio: "easy 3.mp3",
+              answer: "phenomenon",
+            },
+          ],
+          ready: "Listen to the audio, then type the word you hear.",
           complete: "Correct. The word matches the audio.",
         },
         medium: {
@@ -418,18 +504,45 @@
       };
 
       const params = new URLSearchParams(window.location.search);
+      if (!params.has("level")) {
+        params.set("level", "easy");
+        window.history.replaceState(
+          null,
+          "",
+          `${window.location.pathname}?${params.toString()}${window.location.hash}`
+        );
+      }
       const level = tests[params.get("level")] ? params.get("level") : "easy";
       const test = tests[level];
+      const questionActions = document.querySelector("#questionActions");
+      const submittedActions = document.querySelector("#submittedActions");
       const answerInput = document.querySelector("#answerInput");
       const checkButton = document.querySelector("#checkButton");
+      const prevButton = document.querySelector("#prevButton");
+      const nextButton = document.querySelector("#nextButton");
+      const submitTestButton = document.querySelector("#submitTestButton");
       const feedbackTitle = document.querySelector("#feedbackTitle");
       const feedbackText = document.querySelector("#feedbackText");
       const resultPanel = document.querySelector("#resultPanel");
+      const progressText = document.querySelector("#progressText");
+      const playButton = document.querySelector("#playButton");
+      const replayButton = document.querySelector("#replayButton");
+      const questionAudio = document.querySelector("#questionAudio");
+      const wave = document.querySelector("#wave");
+      const questions = test.questions || [
+        {
+          prompt: test.prompt,
+          audio: test.audio,
+          answer: test.answer,
+        },
+      ];
+      let activeQuestion = 0;
       let attemptCount = 0;
+      const userAnswers = Array(questions.length).fill("");
+      const completedQuestions = Array(questions.length).fill(false);
 
       document.querySelector("#levelLabel").textContent = test.label;
       document.querySelector("#testTitle").textContent = test.title;
-      document.querySelector("#promptText").textContent = test.prompt;
       feedbackText.textContent = test.ready;
 
       function normalize(value) {
@@ -440,8 +553,105 @@
           .replace(/\s+/g, " ");
       }
 
+      function encodePath(path) {
+        return path
+          .split("/")
+          .filter(Boolean)
+          .map((segment) => encodeURIComponent(segment))
+          .join("/");
+      }
+
+      function getAppBasePath() {
+        const parts = window.location.pathname.split("/").filter(Boolean);
+        const moduleIndex = parts.indexOf("dictation");
+        if (moduleIndex <= 0) {
+          return "";
+        }
+        return `/${parts.slice(0, moduleIndex).join("/")}`;
+      }
+
+      function resolveAudioUrl(filename) {
+        const base = AUDIO_DIRS[level] || AUDIO_DIRS.easy;
+        return `${getAppBasePath()}/${encodePath(base)}/${encodeURIComponent(filename)}`;
+      }
+
+      function setAudioSource(filename) {
+        const url = resolveAudioUrl(filename);
+        if (questionAudio.dataset.src === url) {
+          return;
+        }
+        questionAudio.pause();
+        questionAudio.dataset.src = url;
+        questionAudio.src = url;
+        questionAudio.load();
+      }
+
+      async function playCurrentAudio() {
+        const question = questions[activeQuestion];
+        if (!question.audio) {
+          feedbackTitle.textContent = "Audio not available";
+          feedbackText.textContent = "Audio is not configured for this item yet.";
+          return;
+        }
+
+        try {
+          setAudioSource(question.audio);
+          questionAudio.currentTime = 0;
+          await questionAudio.play();
+          feedbackTitle.textContent = "Playing audio";
+          feedbackText.textContent = "Listen carefully, then type the word you hear.";
+        } catch (error) {
+          feedbackTitle.textContent = "Audio could not play";
+          feedbackText.textContent = `Could not play ${question.audio}. Check that the file exists at ${resolveAudioUrl(question.audio)}.`;
+        }
+      }
+
+      function setWavePlaying(isPlaying) {
+        wave.classList.toggle("playing", isPlaying);
+      }
+
+      questionAudio.addEventListener("play", () => setWavePlaying(true));
+      questionAudio.addEventListener("pause", () => setWavePlaying(false));
+      questionAudio.addEventListener("ended", () => setWavePlaying(false));
+
+      playButton.addEventListener("click", playCurrentAudio);
+      replayButton.addEventListener("click", playCurrentAudio);
+
+      function renderQuestion() {
+        const question = questions[activeQuestion];
+        document.querySelector("#promptText").textContent = question.prompt;
+        progressText.textContent = `Question ${activeQuestion + 1} of ${questions.length}`;
+        answerInput.value = userAnswers[activeQuestion];
+        answerInput.disabled = false;
+        checkButton.disabled = false;
+        checkButton.textContent = "Check answer";
+        prevButton.disabled = activeQuestion === 0;
+        nextButton.disabled = activeQuestion === questions.length - 1;
+
+        if (completedQuestions[activeQuestion]) {
+          feedbackTitle.textContent = "Correct";
+          feedbackText.textContent =
+            activeQuestion === questions.length - 1
+              ? test.complete
+              : "Correct. Use Previous question or Next question to keep reviewing.";
+          showCorrectPanel(question, false);
+        } else {
+          feedbackTitle.textContent = "Ready to type";
+          feedbackText.textContent = test.ready;
+          resultPanel.classList.remove("active", "final", "correct");
+          resultPanel.innerHTML = "";
+        }
+
+        if (question.audio) {
+          setAudioSource(question.audio);
+        } else {
+          questionAudio.removeAttribute("src");
+          delete questionAudio.dataset.src;
+        }
+      }
+
       function renderHardComparison(userAnswer) {
-        const expectedWords = normalize(test.answer).split(" ");
+        const expectedWords = normalize(questions[activeQuestion].answer).split(" ");
         const userWords = normalize(userAnswer).split(" ");
 
         resultPanel.classList.remove("final");
@@ -455,34 +665,77 @@
       }
 
       function showFinalResult() {
+        userAnswers[activeQuestion] = answerInput.value;
+        const completedTotal = questions.filter((question, index) => {
+          return normalize(userAnswers[index]) === normalize(question.answer);
+        }).length;
+        const unansweredTotal = userAnswers.filter((answer) => normalize(answer) === "").length;
+        const reviewTotal = questions.length - completedTotal - unansweredTotal;
+        resultPanel.classList.remove("correct");
         resultPanel.classList.add("active", "final");
         resultPanel.innerHTML = `
-          <h2>Final Result</h2>
+          <h2>Test Summary</h2>
           <div class="summary-grid">
             <div class="summary-stat">
-              <span>Completed correctly</span>
-              <strong>1 / 1</strong>
+              <span>Correct answers</span>
+              <strong>${completedTotal} / ${questions.length}</strong>
             </div>
             <div class="summary-stat">
               <span>Attempts used</span>
               <strong>${attemptCount}</strong>
+            </div>
+            <div class="summary-stat">
+              <span>Unanswered</span>
+              <strong>${unansweredTotal}</strong>
+            </div>
+            <div class="summary-stat">
+              <span>Needs review</span>
+              <strong>${reviewTotal}</strong>
             </div>
           </div>
         `;
         resultPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
 
+      function lockSubmittedState() {
+        questionAudio.pause();
+        answerInput.disabled = true;
+        playButton.disabled = true;
+        replayButton.disabled = true;
+        questionActions.hidden = true;
+        submittedActions.hidden = false;
+      }
+
+      function showCorrectPanel(question, scrollIntoView = true) {
+        resultPanel.classList.remove("final");
+        resultPanel.classList.add("active", "correct");
+        resultPanel.innerHTML = `
+          <strong>Correct</strong>
+          <span>Your answer matches the audio: ${question.answer}</span>
+        `;
+        if (scrollIntoView) {
+          resultPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }
+
       checkButton.addEventListener("click", () => {
+        const question = questions[activeQuestion];
         attemptCount += 1;
         const userAnswer = answerInput.value;
-        const isCorrect = normalize(userAnswer) === normalize(test.answer);
+        userAnswers[activeQuestion] = userAnswer;
+        const isCorrect = normalize(userAnswer) === normalize(question.answer);
 
         if (isCorrect) {
+          completedQuestions[activeQuestion] = true;
           feedbackTitle.textContent = "Correct";
-          feedbackText.textContent = test.complete;
-          showFinalResult();
-          answerInput.disabled = true;
-          checkButton.disabled = true;
+          showCorrectPanel(question);
+          if (completedQuestions.every(Boolean)) {
+            feedbackText.textContent = test.complete;
+            showFinalResult();
+          } else {
+            feedbackText.textContent =
+              "Correct. Use Previous question or Next question to keep reviewing.";
+          }
           return;
         }
 
@@ -495,10 +748,41 @@
         if (level === "hard") {
           renderHardComparison(userAnswer);
         } else {
-          resultPanel.classList.remove("active", "final");
+          resultPanel.classList.remove("active", "final", "correct");
           resultPanel.innerHTML = "";
         }
       });
+
+      answerInput.addEventListener("input", () => {
+        userAnswers[activeQuestion] = answerInput.value;
+      });
+
+      prevButton.addEventListener("click", () => {
+        if (activeQuestion <= 0) return;
+        activeQuestion -= 1;
+        renderQuestion();
+      });
+
+      nextButton.addEventListener("click", () => {
+        if (activeQuestion >= questions.length - 1) return;
+        activeQuestion += 1;
+        renderQuestion();
+      });
+
+      submitTestButton.addEventListener("click", () => {
+        userAnswers[activeQuestion] = answerInput.value;
+        completedQuestions.forEach((_, index) => {
+          completedQuestions[index] =
+            normalize(userAnswers[index]) === normalize(questions[index].answer);
+        });
+        feedbackTitle.textContent = "Test submitted";
+        feedbackText.textContent =
+          "Your current answers have been submitted, including blank responses.";
+        showFinalResult();
+        lockSubmittedState();
+      });
+
+      renderQuestion();
     </script>
   </body>
 </html>
