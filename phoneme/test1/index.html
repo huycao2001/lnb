@@ -166,6 +166,32 @@
         font-weight: 800;
       }
 
+      .dialogue-frame {
+        margin: 0 0 18px;
+        padding: 18px 20px;
+        border: 1px solid rgba(20, 108, 99, 0.22);
+        border-radius: 8px;
+        background: #f3fbf9;
+        display: grid;
+        gap: 10px;
+      }
+
+      .dialogue-frame[hidden] {
+        display: none;
+      }
+
+      .dialogue-line {
+        margin: 0;
+        font-size: clamp(18px, 2.5vw, 24px);
+        font-weight: 850;
+        line-height: 1.4;
+      }
+
+      .speaker {
+        color: var(--brand-dark);
+        font-weight: 950;
+      }
+
       .audio-zone {
         margin-top: 26px;
         padding: 18px;
@@ -493,6 +519,7 @@
 
         <p class="prompt" id="promptText">Listen and choose the word you hear.</p>
         <div class="sentence-frame" id="sentenceFrame" hidden></div>
+        <div class="dialogue-frame" id="dialogueFrame" hidden></div>
         <p class="question-task" id="questionTask" hidden></p>
 
         <div class="answer-grid" id="answerGrid"></div>
@@ -507,7 +534,7 @@
           <strong id="feedbackTitle">Ready to answer</strong>
           <span id="feedbackText">Play the audio, choose an option, then submit your answer.</span>
           <div class="sentence-reveal" id="sentenceReveal" hidden>
-            <span>Full sentence</span>
+            <span id="revealLabel">Full sentence</span>
             <strong id="fullSentenceText"></strong>
           </div>
           <div class="final-result-summary" id="finalResultSummary" hidden></div>
@@ -602,7 +629,7 @@
           feedback: "Read the sentence frame, choose the word you hear, and retry until correct.",
           questions: [
             {
-              audio: null,
+              audio: "med 1.m4a",
               prompt: "Listen to the sentence. Choose the correct word you hear.",
               sentenceFrame: "The coach worked hard to improve team ______.",
               task: "Which word do you hear?",
@@ -613,7 +640,7 @@
               ],
             },
             {
-              audio: null,
+              audio: "med 2.m4a",
               prompt: "Listen to the sentence. Choose the correct word you hear.",
               sentenceFrame: "People are unhappy because of the ______ this year.",
               task: "Which word do you hear?",
@@ -624,7 +651,7 @@
               ],
             },
             {
-              audio: null,
+              audio: "med 3.m4a",
               prompt: "Listen to the sentence. Choose the correct word you hear.",
               sentenceFrame: "He put the coffee in a paper ______.",
               task: "Which word do you hear?",
@@ -638,17 +665,54 @@
         },
         hard: {
           label: "Hard level - Test 1",
-          title: "Find the sound difference in the dialogue.",
-          feedback: "Choose the changed sound you hear.",
+          title: "Identify the word in the dialogue.",
+          feedback: "Listen to the dialogue, choose the underlined word you hear, and retry until correct.",
           questions: [
             {
-              audio: null,
-              prompt: "Audio: short dialogue with fast connected speech",
+              audio: "hard 1.m4a",
+              prompt: "Listen to the dialogue. Identify the underlined word that you hear.",
+              dialogue: [
+                ["A", "Where did the travellers have ______?"],
+                ["B", "They had it at the desert."],
+              ],
+              task: "Which word do you hear?",
+              revealLabel: "Full dialogue",
+              fullSentence: "A: Where did the travellers have dessert? B: They had it at the desert.",
               answers: [
-                ["/i/ vs /ee/", "bit and beat", "correct"],
-                ["/ae/ vs /e/", "bad and bed", "wrong"],
-                ["/p/ vs /b/", "pat and bat", "wrong"],
-                ["/s/ vs /sh/", "sip and ship", "wrong"],
+                ["A", "Dessert", "correct"],
+                ["B", "Desert", "wrong"],
+              ],
+            },
+            {
+              audio: "hard 2.m4a",
+              prompt: "Listen to the dialogue. Identify the underlined word that you hear.",
+              dialogue: [
+                ["A", "The school ______ canceled the meeting."],
+                ["B", "Why? I thought it was against the school's principle."],
+              ],
+              task: "Which word do you hear?",
+              revealLabel: "Full dialogue",
+              fullSentence:
+                "A: The school principal canceled the meeting. B: Why? I thought it was against the school's principle.",
+              answers: [
+                ["A", "Principal", "correct"],
+                ["B", "Principle", "wrong"],
+              ],
+            },
+            {
+              audio: "hard 3.m4a",
+              prompt: "Listen to the dialogue. Identify the underlined word that you hear.",
+              dialogue: [
+                ["A", "Even on a grey day like this, you still look happy."],
+                ["B", "Of course, I just got a ______ on my exam!"],
+              ],
+              task: "Which word do you hear?",
+              revealLabel: "Full dialogue",
+              fullSentence:
+                "A: Even on a grey day like this, you still look happy. B: Of course, I just got a Grade A on my exam!",
+              answers: [
+                ["A", "Grey day", "wrong"],
+                ["B", "Grade A", "correct"],
               ],
             },
           ],
@@ -659,13 +723,17 @@
       const level = tests[params.get("level")] ? params.get("level") : "easy";
       const test = tests[level];
       const isEasyMode = level === "easy";
+      const usesSubmitButton =
+        level === "easy" || level === "medium" || level === "hard";
       const answerGrid = document.querySelector("#answerGrid");
       const feedbackTitle = document.querySelector("#feedbackTitle");
       const feedbackText = document.querySelector("#feedbackText");
       const finalResultSummary = document.querySelector("#finalResultSummary");
       const sentenceFrame = document.querySelector("#sentenceFrame");
+      const dialogueFrame = document.querySelector("#dialogueFrame");
       const questionTask = document.querySelector("#questionTask");
       const sentenceReveal = document.querySelector("#sentenceReveal");
+      const revealLabel = document.querySelector("#revealLabel");
       const fullSentenceText = document.querySelector("#fullSentenceText");
       const resultPanel = document.querySelector("#resultPanel");
       const progressText = document.querySelector("#progressText");
@@ -785,7 +853,7 @@
           setResultPanel(
             "is-ready",
             "Audio not available",
-            "Audio is ignored for this UI sketch. Use the sentence frame and answer choices below."
+            "Audio is not configured for this item yet."
           );
           return;
         }
@@ -843,6 +911,7 @@
       function showSentenceReveal(question) {
         if (!question.fullSentence) return;
         sentenceReveal.hidden = false;
+        revealLabel.textContent = question.revealLabel || "Full sentence";
         fullSentenceText.textContent = question.fullSentence;
       }
 
@@ -867,7 +936,7 @@
         resultPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
 
-      function resetEasyQuestionUi() {
+      function resetQuestionSelectionUi() {
         selectedAnswerButton = null;
         submitButton.disabled = true;
         setResultPanel(
@@ -892,7 +961,7 @@
             firstAttemptCorrect += 1;
           }
           nextButton.disabled = false;
-          if (isEasyMode) {
+          if (usesSubmitButton) {
             submitButton.disabled = true;
             document.querySelectorAll(".answer").forEach((item) => {
               item.disabled = true;
@@ -911,7 +980,7 @@
           button.classList.add("wrong");
           answeredCorrectly = false;
           nextButton.disabled = true;
-          if (isEasyMode) {
+          if (usesSubmitButton) {
             submitButton.disabled = false;
             document.querySelectorAll(".answer").forEach((item) => {
               item.disabled = false;
@@ -947,12 +1016,23 @@
         document.querySelector("#promptText").textContent = question.prompt;
         sentenceFrame.hidden = !question.sentenceFrame;
         sentenceFrame.textContent = question.sentenceFrame || "";
+        dialogueFrame.hidden = !question.dialogue;
+        dialogueFrame.innerHTML = "";
+        if (question.dialogue) {
+          question.dialogue.forEach(([speaker, line]) => {
+            const row = document.createElement("p");
+            row.className = "dialogue-line";
+            row.innerHTML = `<span class="speaker">${speaker}:</span> ${line}`;
+            dialogueFrame.appendChild(row);
+          });
+        }
         questionTask.hidden = !question.task;
         questionTask.textContent = question.task || "";
         sentenceReveal.hidden = true;
+        revealLabel.textContent = "Full sentence";
         fullSentenceText.textContent = "";
 
-        submitButton.hidden = !isEasyMode;
+        submitButton.hidden = !usesSubmitButton;
 
         answerGrid.innerHTML = "";
         question.answers.forEach(([label, meta, result]) => {
@@ -964,8 +1044,8 @@
           answerGrid.appendChild(button);
         });
 
-        if (isEasyMode) {
-          resetEasyQuestionUi();
+        if (usesSubmitButton) {
+          resetQuestionSelectionUi();
         } else {
           setResultPanel("is-ready", "Ready to answer", test.feedback);
         }
@@ -985,7 +1065,7 @@
         event.preventDefault();
         event.stopPropagation();
 
-        if (isEasyMode) {
+        if (usesSubmitButton) {
           document.querySelectorAll(".answer").forEach((item) => {
             item.classList.remove("selected", "correct", "wrong");
           });
@@ -1005,7 +1085,7 @@
 
       submitButton.addEventListener("click", (event) => {
         event.preventDefault();
-        if (!isEasyMode || !selectedAnswerButton || answeredCorrectly) return;
+        if (!usesSubmitButton || !selectedAnswerButton || answeredCorrectly) return;
         gradeAnswer(selectedAnswerButton);
       });
 
