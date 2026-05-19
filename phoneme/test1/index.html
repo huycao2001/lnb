@@ -1,0 +1,1021 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Phoneme Test 1 | Lis n Bliss</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #17212f;
+        --muted: #617084;
+        --line: #d9e1ea;
+        --soft: #f5f8fb;
+        --panel: #ffffff;
+        --brand: #146c63;
+        --brand-dark: #0d4f49;
+        --success: #157347;
+        --danger: #b42318;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          linear-gradient(120deg, rgba(20, 108, 99, 0.08), transparent 36%),
+          linear-gradient(300deg, rgba(217, 119, 6, 0.09), transparent 32%),
+          var(--soft);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .shell {
+        width: min(920px, calc(100% - 40px));
+        margin: 0 auto;
+        padding-bottom: 44px;
+      }
+
+      header {
+        padding: 24px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: var(--brand);
+        box-shadow: 0 10px 24px rgba(20, 108, 99, 0.22);
+      }
+
+      .nav-link,
+      .primary-btn {
+        min-height: 42px;
+        padding: 10px 16px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+      }
+
+      .nav-link {
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .primary-btn {
+        border: 1px solid var(--brand);
+        color: #fff;
+        background: var(--brand);
+        cursor: pointer;
+      }
+
+      .primary-btn:hover:not(:disabled) {
+        background: var(--brand-dark);
+      }
+
+      .primary-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .test-panel,
+      .feedback-panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 16px 46px rgba(24, 33, 47, 0.08);
+      }
+
+      .test-panel {
+        padding: clamp(20px, 4vw, 34px);
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--brand-dark);
+        font-size: 13px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(32px, 5vw, 52px);
+        line-height: 1;
+      }
+
+      .progress {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .prompt {
+        margin: 28px 0 14px;
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .sentence-frame {
+        margin: 0 0 18px;
+        padding: 18px 20px;
+        border: 1px solid rgba(20, 108, 99, 0.22);
+        border-radius: 8px;
+        background: #f3fbf9;
+        font-size: clamp(20px, 3vw, 28px);
+        font-weight: 900;
+        line-height: 1.35;
+      }
+
+      .question-task {
+        margin: 0 0 16px;
+        color: var(--muted);
+        font-size: 16px;
+        font-weight: 800;
+      }
+
+      .audio-zone {
+        margin-top: 26px;
+        padding: 18px;
+        border: 1px solid rgba(20, 108, 99, 0.18);
+        border-radius: 8px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 16px;
+        align-items: center;
+        background: #f3fbf9;
+      }
+
+      .icon-btn {
+        width: 52px;
+        height: 52px;
+        border: 0;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: var(--brand);
+        cursor: pointer;
+      }
+
+      .icon-btn:hover {
+        background: var(--brand-dark);
+      }
+
+      .wave {
+        height: 42px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .wave span {
+        width: 7px;
+        border-radius: 999px;
+        background: rgba(20, 108, 99, 0.62);
+        transition: height 0.15s ease;
+      }
+
+      .wave.playing span:nth-child(1) {
+        animation: pulse 0.55s ease-in-out infinite alternate;
+      }
+
+      .wave.playing span:nth-child(2) {
+        animation: pulse 0.55s ease-in-out 0.1s infinite alternate;
+      }
+
+      .wave.playing span:nth-child(3) {
+        animation: pulse 0.55s ease-in-out 0.2s infinite alternate;
+      }
+
+      .wave.playing span:nth-child(4) {
+        animation: pulse 0.55s ease-in-out 0.3s infinite alternate;
+      }
+
+      @keyframes pulse {
+        from {
+          height: 14px;
+        }
+        to {
+          height: 38px;
+        }
+      }
+
+      .wave span:nth-child(1) {
+        height: 16px;
+      }
+
+      .wave span:nth-child(2) {
+        height: 30px;
+      }
+
+      .wave span:nth-child(3) {
+        height: 22px;
+      }
+
+      .wave span:nth-child(4) {
+        height: 38px;
+      }
+
+      .replay {
+        grid-column: 1 / -1;
+        justify-self: start;
+        min-height: 38px;
+        padding: 8px 14px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--ink);
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .replay:hover {
+        border-color: rgba(20, 108, 99, 0.45);
+      }
+
+      .answer-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .answer {
+        min-height: 66px;
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--ink);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .answer:disabled {
+        cursor: default;
+      }
+
+      .answer strong,
+      .answer span,
+      .feedback-panel strong,
+      .feedback-panel span {
+        display: block;
+      }
+
+      .answer span,
+      .feedback-panel span {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .answer.correct {
+        border-color: rgba(21, 115, 71, 0.45);
+        background: #effaf3;
+      }
+
+      .answer.wrong {
+        border-color: rgba(180, 35, 24, 0.45);
+        background: #fff1ef;
+      }
+
+      .actions {
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .result-notice {
+        margin-top: 20px;
+        padding: 18px 20px;
+        min-height: 76px;
+        border-radius: 8px;
+        border: 2px solid var(--line);
+        background: var(--panel);
+        box-shadow: 0 8px 24px rgba(24, 33, 47, 0.06);
+      }
+
+      .result-notice[hidden] {
+        display: none !important;
+      }
+
+      .result-notice strong {
+        font-size: 20px;
+        margin-bottom: 6px;
+      }
+
+      .result-notice.is-correct {
+        border-color: var(--success);
+        background: #effaf3;
+      }
+
+      .result-notice.is-correct strong {
+        color: var(--success);
+      }
+
+      .result-notice.is-wrong {
+        border-color: var(--danger);
+        background: #fff1ef;
+      }
+
+      .result-notice.is-wrong strong {
+        color: var(--danger);
+      }
+
+      .result-notice.is-ready {
+        border-color: rgba(20, 108, 99, 0.35);
+        background: #f3fbf9;
+      }
+
+      .result-notice.is-ready strong {
+        color: var(--brand-dark);
+      }
+
+      .final-result-summary {
+        margin-top: 14px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .final-result-summary[hidden] {
+        display: none;
+      }
+
+      .sentence-reveal {
+        margin-top: 14px;
+        padding: 14px 16px;
+        border: 1px solid rgba(21, 115, 71, 0.24);
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .sentence-reveal[hidden] {
+        display: none;
+      }
+
+      .sentence-reveal span {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .sentence-reveal strong {
+        display: block;
+        color: var(--ink);
+        font-size: 18px;
+        line-height: 1.45;
+      }
+
+      .summary-stat {
+        padding: 12px;
+        border: 1px solid rgba(21, 115, 71, 0.22);
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .summary-stat span {
+        margin: 0 0 4px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .summary-stat strong {
+        margin: 0;
+        color: var(--ink);
+        font-size: 22px;
+      }
+
+      .answer.selected {
+        border-color: rgba(37, 99, 235, 0.55);
+        background: #eff6ff;
+        box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.2);
+      }
+
+      #submitButton[hidden] {
+        display: none;
+      }
+
+      @media (max-width: 640px) {
+        .shell {
+          width: min(100% - 28px, 920px);
+        }
+
+        header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .answer-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .audio-zone {
+          grid-template-columns: auto minmax(0, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <a class="brand" href="../../index.html" aria-label="Lis n Bliss home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M5 10v4M9 7v10M13 4v16M17 8v8M21 11v2"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </span>
+          <span>Lis n Bliss</span>
+        </a>
+
+        <a class="nav-link" href="../">Back to tests</a>
+      </header>
+
+      <main class="test-panel" aria-label="Phoneme test question">
+        <p class="eyebrow" id="levelLabel">Easy level - Test 1</p>
+        <h1 id="testTitle">Choose the word you hear.</h1>
+        <p class="progress" id="progressText">Question 1 of 5</p>
+
+        <div class="audio-zone">
+          <button class="icon-btn" type="button" id="playButton" aria-label="Play audio">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M8 5v14l11-7L8 5Z" fill="currentColor" />
+            </svg>
+          </button>
+          <div class="wave" id="wave" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <button class="replay" type="button" id="replayButton">Replay audio</button>
+        </div>
+
+        <p class="prompt" id="promptText">Listen and choose the word you hear.</p>
+        <div class="sentence-frame" id="sentenceFrame" hidden></div>
+        <p class="question-task" id="questionTask" hidden></p>
+
+        <div class="answer-grid" id="answerGrid"></div>
+
+        <div
+          class="result-notice is-ready"
+          id="resultPanel"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <strong id="feedbackTitle">Ready to answer</strong>
+          <span id="feedbackText">Play the audio, choose an option, then submit your answer.</span>
+          <div class="sentence-reveal" id="sentenceReveal" hidden>
+            <span>Full sentence</span>
+            <strong id="fullSentenceText"></strong>
+          </div>
+          <div class="final-result-summary" id="finalResultSummary" hidden></div>
+        </div>
+
+        <div class="actions">
+          <button
+            class="primary-btn"
+            type="button"
+            id="submitButton"
+            hidden
+            disabled
+          >
+            Submit answer
+          </button>
+          <button class="primary-btn" type="button" id="nextButton" disabled>Next question</button>
+        </div>
+      </main>
+    </div>
+
+    <audio id="questionAudio" preload="metadata" playsinline></audio>
+
+    <script>
+      // Root-absolute paths so audio works with `serve` (e.g. port 3000) from any page depth.
+      const AUDIO_DIRS = {
+        easy: "audio/Phoneme discrimination/Easy",
+        medium: "audio/Phoneme discrimination/Medium",
+        hard: "audio/Phoneme discrimination/Hard",
+      };
+
+      const tests = {
+        easy: {
+          label: "Easy level - Test 1",
+          title: "Choose the word you hear.",
+          feedback: "Play the audio, then choose the option you hear.",
+          questions: [
+            {
+              audio: "sheep.mp3",
+              prompt: "Minimal pair: /i:/ vs /ɪ/ — long vs short vowel",
+              answers: [
+                ["sheep", "/sh-ee-p/", "correct"],
+                ["ship", "/sh-i-p/", "wrong"],
+                ["cheap", "/ch-ee-p/", "wrong"],
+                ["chip", "/ch-i-p/", "wrong"],
+              ],
+            },
+            {
+              audio: "bad.mp3",
+              prompt: "Minimal pair: /æ/ vs /e/",
+              answers: [
+                ["bad", "/baed/", "correct"],
+                ["bed", "/bed/", "wrong"],
+                ["bid", "/bid/", "wrong"],
+                ["bead", "/beed/", "wrong"],
+              ],
+            },
+            {
+              audio: "sit.mp3",
+              prompt: "Minimal pair: short /ɪ/ vs long /i:/",
+              answers: [
+                ["sit", "/sit/", "correct"],
+                ["seat", "/seet/", "wrong"],
+                ["set", "/set/", "wrong"],
+                ["sat", "/sat/", "wrong"],
+              ],
+            },
+            {
+              audio: "pool.mp3",
+              prompt: "Minimal pair: long /u:/ vs short /ʊ/",
+              answers: [
+                ["pool", "/pool/", "correct"],
+                ["pull", "/pul/", "wrong"],
+                ["pole", "/pohl/", "wrong"],
+                ["pal", "/pal/", "wrong"],
+              ],
+            },
+            {
+              audio: "rice.mp3",
+              prompt: "Minimal pair: /r/ vs /l/ at the start",
+              answers: [
+                ["rice", "/rais/", "correct"],
+                ["lice", "/lais/", "wrong"],
+                ["rise", "/raiz/", "wrong"],
+                ["race", "/reis/", "wrong"],
+              ],
+            },
+          ],
+        },
+        medium: {
+          label: "Medium level - Test 1",
+          title: "Identify the word in the sentence.",
+          feedback: "Read the sentence frame, choose the word you hear, and retry until correct.",
+          questions: [
+            {
+              audio: null,
+              prompt: "Listen to the sentence. Choose the correct word you hear.",
+              sentenceFrame: "The coach worked hard to improve team ______.",
+              task: "Which word do you hear?",
+              fullSentence: "The coach worked hard to improve team morale.",
+              answers: [
+                ["A", "Morale", "correct"],
+                ["B", "Moral", "wrong"],
+              ],
+            },
+            {
+              audio: null,
+              prompt: "Listen to the sentence. Choose the correct word you hear.",
+              sentenceFrame: "People are unhappy because of the ______ this year.",
+              task: "Which word do you hear?",
+              fullSentence: "People are unhappy because of the price rises this year.",
+              answers: [
+                ["A", "Price rises", "correct"],
+                ["B", "Prize rises", "wrong"],
+              ],
+            },
+            {
+              audio: null,
+              prompt: "Listen to the sentence. Choose the correct word you hear.",
+              sentenceFrame: "He put the coffee in a paper ______.",
+              task: "Which word do you hear?",
+              fullSentence: "He put the coffee in a paper cup.",
+              answers: [
+                ["A", "Cap", "wrong"],
+                ["B", "Cup", "correct"],
+              ],
+            },
+          ],
+        },
+        hard: {
+          label: "Hard level - Test 1",
+          title: "Find the sound difference in the dialogue.",
+          feedback: "Choose the changed sound you hear.",
+          questions: [
+            {
+              audio: null,
+              prompt: "Audio: short dialogue with fast connected speech",
+              answers: [
+                ["/i/ vs /ee/", "bit and beat", "correct"],
+                ["/ae/ vs /e/", "bad and bed", "wrong"],
+                ["/p/ vs /b/", "pat and bat", "wrong"],
+                ["/s/ vs /sh/", "sip and ship", "wrong"],
+              ],
+            },
+          ],
+        },
+      };
+
+      const params = new URLSearchParams(window.location.search);
+      const level = tests[params.get("level")] ? params.get("level") : "easy";
+      const test = tests[level];
+      const isEasyMode = level === "easy";
+      const answerGrid = document.querySelector("#answerGrid");
+      const feedbackTitle = document.querySelector("#feedbackTitle");
+      const feedbackText = document.querySelector("#feedbackText");
+      const finalResultSummary = document.querySelector("#finalResultSummary");
+      const sentenceFrame = document.querySelector("#sentenceFrame");
+      const questionTask = document.querySelector("#questionTask");
+      const sentenceReveal = document.querySelector("#sentenceReveal");
+      const fullSentenceText = document.querySelector("#fullSentenceText");
+      const resultPanel = document.querySelector("#resultPanel");
+      const progressText = document.querySelector("#progressText");
+      const submitButton = document.querySelector("#submitButton");
+      const nextButton = document.querySelector("#nextButton");
+      const playButton = document.querySelector("#playButton");
+      const replayButton = document.querySelector("#replayButton");
+      const questionAudio = document.querySelector("#questionAudio");
+      const wave = document.querySelector("#wave");
+
+      let activeQuestion = 0;
+      let answeredCorrectly = false;
+      let selectedAnswerButton = null;
+      let correctTotal = 0;
+      let firstAttemptCorrect = 0;
+      let currentQuestionAttempts = 0;
+
+      document.querySelector("#levelLabel").textContent = test.label;
+      document.querySelector("#testTitle").textContent = test.title;
+
+      function encodePath(path) {
+        return path
+          .split("/")
+          .filter(Boolean)
+          .map((segment) => encodeURIComponent(segment))
+          .join("/");
+      }
+
+      function resolveAudioUrl(filename) {
+        const base = AUDIO_DIRS[level] || AUDIO_DIRS.easy;
+        return `/${encodePath(base)}/${encodeURIComponent(filename)}`;
+      }
+
+      function setAudioSource(filename) {
+        const url = resolveAudioUrl(filename);
+        if (questionAudio.dataset.src === url) {
+          return url;
+        }
+        questionAudio.pause();
+        questionAudio.dataset.src = url;
+        questionAudio.src = url;
+        questionAudio.load();
+        return url;
+      }
+
+      function waitForAudioReady() {
+        if (questionAudio.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+          return Promise.resolve();
+        }
+
+        return new Promise((resolve, reject) => {
+          const timeout = window.setTimeout(() => {
+            cleanup();
+            reject(new Error("load-timeout"));
+          }, 8000);
+
+          const onReady = () => {
+            cleanup();
+            resolve();
+          };
+          const onError = () => {
+            cleanup();
+            reject(new Error("load-failed"));
+          };
+          const cleanup = () => {
+            window.clearTimeout(timeout);
+            questionAudio.removeEventListener("canplay", onReady);
+            questionAudio.removeEventListener("loadeddata", onReady);
+            questionAudio.removeEventListener("error", onError);
+          };
+
+          questionAudio.addEventListener("canplay", onReady, { once: true });
+          questionAudio.addEventListener("loadeddata", onReady, { once: true });
+          questionAudio.addEventListener("error", onError, { once: true });
+        });
+      }
+
+      function showPlaybackError(err, filename) {
+        if (window.location.protocol === "file:") {
+          setResultPanel(
+            "is-wrong",
+            "Audio could not play",
+            "Run your local server from the project root, then open /phoneme/test1?level=easy"
+          );
+          return;
+        }
+
+        if (err?.message === "load-failed" || err?.message === "load-timeout") {
+          setResultPanel(
+            "is-wrong",
+            "Audio could not play",
+            `Could not load ${filename || "audio"}. Expected at ${resolveAudioUrl(filename || "sheep.mp3")}`
+          );
+          return;
+        }
+
+        setResultPanel(
+          "is-wrong",
+          "Audio could not play",
+          "Click Play or Replay again. Check your volume and browser sound settings."
+        );
+      }
+
+      async function playCurrentAudio() {
+        const question = test.questions[activeQuestion];
+
+        if (!question?.audio) {
+          setResultPanel(
+            "is-ready",
+            "Audio not available",
+            "Audio is ignored for this UI sketch. Use the sentence frame and answer choices below."
+          );
+          return;
+        }
+
+        try {
+          setAudioSource(question.audio);
+          await waitForAudioReady();
+          questionAudio.currentTime = 0;
+          await questionAudio.play();
+          if (isEasyMode && !answeredCorrectly) {
+            setResultPanel(
+              "is-ready",
+              "Playing audio",
+              "Listen carefully, then choose your answer and submit."
+            );
+          } else if (!isEasyMode) {
+            setResultPanel(
+              "is-ready",
+              "Playing audio",
+              "Listen carefully, then choose your answer."
+            );
+          }
+        } catch (err) {
+          showPlaybackError(err, question.audio);
+        }
+      }
+
+      function setWavePlaying(isPlaying) {
+        wave.classList.toggle("playing", isPlaying);
+      }
+
+      questionAudio.addEventListener("play", () => setWavePlaying(true));
+      questionAudio.addEventListener("pause", () => setWavePlaying(false));
+      questionAudio.addEventListener("ended", () => setWavePlaying(false));
+
+      playButton.addEventListener("click", playCurrentAudio);
+      replayButton.addEventListener("click", playCurrentAudio);
+
+      function setResultPanel(state, title, message, scrollIntoView = false) {
+        resultPanel.hidden = false;
+        resultPanel.classList.remove("is-ready", "is-correct", "is-wrong");
+        if (state) {
+          resultPanel.classList.add(state);
+        }
+        feedbackTitle.textContent = title;
+        feedbackText.textContent = message;
+        finalResultSummary.hidden = true;
+        finalResultSummary.innerHTML = "";
+        sentenceReveal.hidden = true;
+        if (scrollIntoView) {
+          resultPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }
+
+      function showSentenceReveal(question) {
+        if (!question.fullSentence) return;
+        sentenceReveal.hidden = false;
+        fullSentenceText.textContent = question.fullSentence;
+      }
+
+      function showFinalResult() {
+        const total = test.questions.length;
+        setResultPanel(
+          "is-correct",
+          "Test complete",
+          `You finished this ${test.label.toLowerCase()} set.`
+        );
+        finalResultSummary.innerHTML = `
+          <div class="summary-stat">
+            <span>Completed correctly</span>
+            <strong>${correctTotal} / ${total}</strong>
+          </div>
+          <div class="summary-stat">
+            <span>First-attempt correct</span>
+            <strong>${firstAttemptCorrect} / ${total}</strong>
+          </div>
+        `;
+        finalResultSummary.hidden = false;
+        resultPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+
+      function resetEasyQuestionUi() {
+        selectedAnswerButton = null;
+        submitButton.disabled = true;
+        setResultPanel(
+          "is-ready",
+          "Ready to answer",
+          "Play the audio, choose an option, then submit your answer."
+        );
+      }
+
+      function gradeAnswer(button) {
+        const question = test.questions[activeQuestion];
+        currentQuestionAttempts += 1;
+        document.querySelectorAll(".answer").forEach((item) => {
+          item.classList.remove("correct", "wrong", "selected");
+        });
+
+        if (button.dataset.result === "correct") {
+          button.classList.add("correct");
+          answeredCorrectly = true;
+          correctTotal += 1;
+          if (currentQuestionAttempts === 1) {
+            firstAttemptCorrect += 1;
+          }
+          nextButton.disabled = false;
+          if (isEasyMode) {
+            submitButton.disabled = true;
+            document.querySelectorAll(".answer").forEach((item) => {
+              item.disabled = true;
+            });
+          }
+          setResultPanel(
+            "is-correct",
+            "Correct",
+            "Well done - that answer matches the sentence.",
+            true
+          );
+          if (level === "medium") {
+            showSentenceReveal(question);
+          }
+        } else {
+          button.classList.add("wrong");
+          answeredCorrectly = false;
+          nextButton.disabled = true;
+          if (isEasyMode) {
+            submitButton.disabled = false;
+            document.querySelectorAll(".answer").forEach((item) => {
+              item.disabled = false;
+            });
+            setResultPanel(
+              "is-wrong",
+              "Incorrect",
+              "That is not correct. Choose another option and submit again, or use Replay audio.",
+              true
+            );
+          } else {
+            setResultPanel(
+              "is-wrong",
+              "Try again",
+              "That is not correct. Use Replay audio and choose again.",
+              true
+            );
+          }
+        }
+      }
+
+      function renderQuestion() {
+        const question = test.questions[activeQuestion];
+        const total = test.questions.length;
+
+        answeredCorrectly = false;
+        currentQuestionAttempts = 0;
+        nextButton.disabled = true;
+        nextButton.textContent =
+          activeQuestion === total - 1 ? "Finish test" : "Next question";
+
+        progressText.textContent = `Question ${activeQuestion + 1} of ${total}`;
+        document.querySelector("#promptText").textContent = question.prompt;
+        sentenceFrame.hidden = !question.sentenceFrame;
+        sentenceFrame.textContent = question.sentenceFrame || "";
+        questionTask.hidden = !question.task;
+        questionTask.textContent = question.task || "";
+        sentenceReveal.hidden = true;
+        fullSentenceText.textContent = "";
+
+        submitButton.hidden = !isEasyMode;
+
+        answerGrid.innerHTML = "";
+        question.answers.forEach(([label, meta, result]) => {
+          const button = document.createElement("button");
+          button.className = "answer";
+          button.type = "button";
+          button.dataset.result = result;
+          button.innerHTML = `<strong>${label}</strong><span>${meta}</span>`;
+          answerGrid.appendChild(button);
+        });
+
+        if (isEasyMode) {
+          resetEasyQuestionUi();
+        } else {
+          setResultPanel("is-ready", "Ready to answer", test.feedback);
+        }
+
+        if (question.audio) {
+          setAudioSource(question.audio);
+        } else {
+          questionAudio.removeAttribute("src");
+          delete questionAudio.dataset.src;
+        }
+      }
+
+      answerGrid.addEventListener("click", (event) => {
+        const button = event.target.closest(".answer");
+        if (!button || button.disabled || answeredCorrectly) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (isEasyMode) {
+          document.querySelectorAll(".answer").forEach((item) => {
+            item.classList.remove("selected", "correct", "wrong");
+          });
+          button.classList.add("selected");
+          selectedAnswerButton = button;
+          submitButton.disabled = false;
+          setResultPanel(
+            "is-ready",
+            "Answer selected",
+            "Click Submit answer to check your response."
+          );
+          return;
+        }
+
+        gradeAnswer(button);
+      });
+
+      submitButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (!isEasyMode || !selectedAnswerButton || answeredCorrectly) return;
+        gradeAnswer(selectedAnswerButton);
+      });
+
+      nextButton.addEventListener("click", () => {
+        if (!answeredCorrectly) return;
+
+        if (activeQuestion < test.questions.length - 1) {
+          activeQuestion += 1;
+          renderQuestion();
+          return;
+        }
+
+        showFinalResult();
+        submitButton.hidden = true;
+        nextButton.disabled = true;
+        nextButton.textContent = "Set complete";
+      });
+
+      renderQuestion();
+    </script>
+  </body>
+</html>

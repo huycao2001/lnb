@@ -1,0 +1,16 @@
+node:internal/modules/cjs/loader:933
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module 'C:\Users\Dell\AppData\Local\npm-cache\_npx\aab42732f01924e5\node_modules\eastasianwidth\eastasianwidth.js'
+    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:933:15)
+    at Function.Module._load (node:internal/modules/cjs/loader:778:27)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:168:29)
+    at ModuleJob.run (node:internal/modules/esm/module_job:197:25)
+    at async Promise.all (index 0)
+    at async ESMLoader.import (node:internal/modules/esm/loader:337:24)
+    at async loadESM (node:internal/process/esm_loader:88:5)
+    at async handleMainPromise (node:internal/modules/run_main:61:12) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}

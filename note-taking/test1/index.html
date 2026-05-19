@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Note-taking Test 1 | Lis n Bliss</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #17212f;
+        --muted: #617084;
+        --line: #d9e1ea;
+        --soft: #f5f8fb;
+        --panel: #ffffff;
+        --brand: #146c63;
+        --brand-dark: #0d4f49;
+        --success: #157347;
+        --danger: #b42318;
+        --accent: #d97706;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          linear-gradient(120deg, rgba(20, 108, 99, 0.08), transparent 36%),
+          linear-gradient(300deg, rgba(217, 119, 6, 0.09), transparent 32%),
+          var(--soft);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      textarea,
+      input,
+      select {
+        font: inherit;
+      }
+
+      .shell {
+        width: min(1040px, calc(100% - 40px));
+        margin: 0 auto;
+        padding-bottom: 44px;
+      }
+
+      header {
+        padding: 24px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: var(--brand);
+        box-shadow: 0 10px 24px rgba(20, 108, 99, 0.22);
+      }
+
+      .nav-link,
+      .primary-btn {
+        min-height: 42px;
+        padding: 10px 16px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+      }
+
+      .nav-link {
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .primary-btn {
+        border: 1px solid var(--brand);
+        color: #fff;
+        background: var(--brand);
+        cursor: pointer;
+      }
+
+      .primary-btn:hover:not(:disabled) {
+        background: var(--brand-dark);
+      }
+
+      .primary-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .test-panel,
+      .feedback-panel,
+      .analysis-panel,
+      .expert-panel,
+      .final-panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 16px 46px rgba(24, 33, 47, 0.08);
+      }
+
+      .test-panel {
+        padding: clamp(20px, 4vw, 34px);
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--brand-dark);
+        font-size: 13px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(32px, 5vw, 52px);
+        line-height: 1;
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 22px;
+      }
+
+      .audio-zone {
+        margin-top: 26px;
+        padding: 18px;
+        border: 1px solid rgba(20, 108, 99, 0.18);
+        border-radius: 8px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 16px;
+        align-items: center;
+        background: #f3fbf9;
+      }
+
+      .icon-btn {
+        width: 52px;
+        height: 52px;
+        border: 0;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: var(--brand);
+        cursor: pointer;
+      }
+
+      .wave {
+        height: 42px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .wave span {
+        width: 7px;
+        border-radius: 999px;
+        background: rgba(20, 108, 99, 0.62);
+      }
+
+      .wave span:nth-child(1) {
+        height: 16px;
+      }
+
+      .wave span:nth-child(2) {
+        height: 30px;
+      }
+
+      .wave span:nth-child(3) {
+        height: 22px;
+      }
+
+      .wave span:nth-child(4) {
+        height: 38px;
+      }
+
+      .replay {
+        min-height: 42px;
+        padding: 10px 14px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--ink);
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .prompt {
+        margin: 28px 0 14px;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      .answer-input,
+      .field-input,
+      .gap-select {
+        width: 100%;
+        padding: 13px 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--ink);
+      }
+
+      .answer-input {
+        min-height: 150px;
+        resize: vertical;
+      }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .note-field label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .actions {
+        margin-top: 14px;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .feedback-panel,
+      .analysis-panel,
+      .expert-panel,
+      .final-panel {
+        margin-top: 18px;
+        padding: 16px;
+      }
+
+      .feedback-panel strong,
+      .feedback-panel span,
+      .score-row span,
+      .score-row strong {
+        display: block;
+      }
+
+      .feedback-panel span {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .analysis-panel,
+      .expert-panel,
+      .final-panel {
+        display: none;
+      }
+
+      .analysis-panel.active,
+      .expert-panel.active,
+      .final-panel.active {
+        display: block;
+      }
+
+      .final-panel {
+        border-color: rgba(21, 115, 71, 0.35);
+        background: #effaf3;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .summary-stat {
+        padding: 12px;
+        border: 1px solid rgba(21, 115, 71, 0.22);
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .summary-stat span,
+      .summary-stat strong {
+        display: block;
+      }
+
+      .summary-stat span {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .summary-stat strong {
+        margin-top: 4px;
+        color: var(--ink);
+        font-size: 22px;
+      }
+
+      .score-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+        padding: 10px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .score-row:first-of-type {
+        border-top: 0;
+      }
+
+      .score-row span {
+        color: var(--muted);
+      }
+
+      .comparison {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .note-box {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        line-height: 1.6;
+      }
+
+      .gap-list {
+        margin: 0;
+        padding-left: 20px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .gap-list strong {
+        color: var(--ink);
+      }
+
+      @media (max-width: 760px) {
+        .field-grid,
+        .comparison,
+        .summary-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .shell {
+          width: min(100% - 28px, 1040px);
+        }
+
+        header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .audio-zone {
+          grid-template-columns: auto minmax(0, 1fr);
+        }
+
+        .replay {
+          grid-column: 1 / -1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <a class="brand" href="../../index.html" aria-label="Lis n Bliss home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M5 10v4M9 7v10M13 4v16M17 8v8M21 11v2"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </span>
+          <span>Lis n Bliss</span>
+        </a>
+
+        <a class="nav-link" href="../../note-taking.html">Back to tests</a>
+      </header>
+
+      <main class="test-panel" aria-label="Note-taking test question">
+        <p class="eyebrow" id="levelLabel">Easy level - Test 1</p>
+        <h1 id="testTitle">Guided note-filling</h1>
+
+        <div class="audio-zone">
+          <button class="icon-btn" type="button" aria-label="Play audio">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M8 5v14l11-7L8 5Z" fill="currentColor" />
+            </svg>
+          </button>
+          <div class="wave" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <button class="replay" type="button">Replay audio</button>
+        </div>
+
+        <p class="prompt" id="promptText">Complete the guided notes from the audio.</p>
+        <div id="answerArea"></div>
+
+        <div class="actions">
+          <button class="primary-btn" type="button" id="checkButton">Check notes</button>
+        </div>
+
+        <div class="feedback-panel" aria-live="polite">
+          <strong id="feedbackTitle">Ready to listen</strong>
+          <span id="feedbackText">Play the audio, then complete the note-taking task.</span>
+        </div>
+
+        <div class="analysis-panel" id="analysisPanel"></div>
+        <div class="expert-panel" id="expertPanel"></div>
+        <div class="final-panel" id="finalPanel" aria-live="polite"></div>
+      </main>
+    </div>
+
+    <script>
+      const tests = {
+        easy: {
+          label: "Easy level - Test 1",
+          title: "Guided note-filling",
+          prompt: "Complete the guided notes from the audio.",
+          mode: "guided",
+          fields: [
+            ["topic", "Topic", "weather"],
+            ["detail", "Key detail", "rain"],
+          ],
+          ready: "Fill the two guided note blanks.",
+        },
+        medium: {
+          label: "Medium level - Test 1",
+          title: "Outlining method",
+          prompt: "Separate the main idea from supporting details.",
+          mode: "outline",
+          keywords: ["library", "hours", "students"],
+          missed: ["00:18 - evening hours", "00:31 - student study groups"],
+          ready: "Write an outline. Include the main idea and supporting details.",
+        },
+        hard: {
+          label: "Hard level - Test 1",
+          title: "Synthetic summary",
+          prompt: "Take notes, then compare your summary with Expert Notes.",
+          mode: "summary",
+          expert:
+            "The speaker argues that shorter meetings improve focus when teams share agendas early, assign decisions clearly, and record follow-up tasks.",
+          gaps: [
+            ["Vocabulary", "agenda, follow-up tasks"],
+            ["Speech speed", "fast transition between problem and solution"],
+            ["Logic", "cause: shorter meetings; result: clearer decisions"],
+          ],
+          ready: "Write a short synthetic summary using shorthand or symbols where useful.",
+        },
+      };
+
+      const params = new URLSearchParams(window.location.search);
+      const level = tests[params.get("level")] ? params.get("level") : "easy";
+      const test = tests[level];
+      const answerArea = document.querySelector("#answerArea");
+      const checkButton = document.querySelector("#checkButton");
+      const feedbackTitle = document.querySelector("#feedbackTitle");
+      const feedbackText = document.querySelector("#feedbackText");
+      const analysisPanel = document.querySelector("#analysisPanel");
+      const expertPanel = document.querySelector("#expertPanel");
+      const finalPanel = document.querySelector("#finalPanel");
+      let attemptCount = 0;
+
+      document.querySelector("#levelLabel").textContent = test.label;
+      document.querySelector("#testTitle").textContent = test.title;
+      document.querySelector("#promptText").textContent = test.prompt;
+      feedbackText.textContent = test.ready;
+
+      function normalize(value) {
+        return value.trim().toLowerCase().replace(/[.,!?]/g, "").replace(/\s+/g, " ");
+      }
+
+      function renderTask() {
+        if (test.mode === "guided") {
+          answerArea.innerHTML = `
+            <div class="field-grid">
+              ${test.fields
+                .map(
+                  ([id, label]) => `
+                    <div class="note-field">
+                      <label for="${id}">${label}</label>
+                      <input class="field-input" id="${id}" type="text" />
+                    </div>
+                  `,
+                )
+                .join("")}
+            </div>
+          `;
+          return;
+        }
+
+        answerArea.innerHTML = `<textarea class="answer-input" id="notesInput" aria-label="Your notes"></textarea>`;
+      }
+
+      function hideFinalResult() {
+        finalPanel.classList.remove("active");
+        finalPanel.innerHTML = "";
+      }
+
+      function showFinalResult(scoreLabel, scoreValue, detailLabel, detailValue) {
+        finalPanel.innerHTML = `
+          <h2>Final Result</h2>
+          <div class="summary-grid">
+            <div class="summary-stat">
+              <span>${scoreLabel}</span>
+              <strong>${scoreValue}</strong>
+            </div>
+            <div class="summary-stat">
+              <span>${detailLabel}</span>
+              <strong>${detailValue}</strong>
+            </div>
+          </div>
+        `;
+        finalPanel.classList.add("active");
+        finalPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+
+      function checkGuided() {
+        const results = test.fields.map(([id, label, expected]) => {
+          const value = document.querySelector(`#${id}`).value;
+          return { label, expected, correct: normalize(value) === expected };
+        });
+        const correctCount = results.filter((item) => item.correct).length;
+
+        feedbackTitle.textContent =
+          correctCount === results.length ? "Complete" : "Keep revising";
+        feedbackText.textContent = `${correctCount} of ${results.length} guided notes are accurate.`;
+        analysisPanel.innerHTML = results
+          .map(
+            (item) => `
+              <div class="score-row">
+                <span>${item.label}: expected "${item.expected}"</span>
+                <strong>${item.correct ? "Correct" : "Missing"}</strong>
+              </div>
+            `,
+          )
+          .join("");
+        analysisPanel.classList.add("active");
+        if (correctCount === results.length) {
+          showFinalResult(
+            "Completed correctly",
+            `${correctCount} / ${results.length}`,
+            "Attempts used",
+            attemptCount
+          );
+          checkButton.disabled = true;
+          document.querySelectorAll(".field-input").forEach((input) => {
+            input.disabled = true;
+          });
+        } else {
+          hideFinalResult();
+        }
+      }
+
+      function checkOutline() {
+        const notes = normalize(document.querySelector("#notesInput").value);
+        const matched = test.keywords.filter((keyword) => notes.includes(keyword));
+
+        feedbackTitle.textContent = matched.length === test.keywords.length ? "Strong outline" : "Review missed information";
+        feedbackText.textContent = `Keyword score: ${matched.length} / ${test.keywords.length}`;
+        analysisPanel.innerHTML = `
+          <h2>Missed Timestamps</h2>
+          ${test.missed
+            .map(
+              (item) => `
+                <div class="score-row">
+                  <span>${item}</span>
+                  <strong>${notes.includes(item.split(" - ")[1].split(" ")[0]) ? "Found" : "Review"}</strong>
+                </div>
+              `,
+            )
+            .join("")}
+        `;
+        analysisPanel.classList.add("active");
+        if (matched.length === test.keywords.length) {
+          showFinalResult(
+            "Keyword score",
+            `${matched.length} / ${test.keywords.length}`,
+            "Attempts used",
+            attemptCount
+          );
+          checkButton.disabled = true;
+          document.querySelector("#notesInput").disabled = true;
+        } else {
+          hideFinalResult();
+        }
+      }
+
+      function checkSummary() {
+        const notes = document.querySelector("#notesInput").value || "No notes entered yet.";
+        feedbackTitle.textContent = "Compare and analyze";
+        feedbackText.textContent = "Use the Expert Notes and Gap Analysis to revise your summary.";
+        expertPanel.innerHTML = `
+          <h2>Expert Notes</h2>
+          <div class="comparison">
+            <div class="note-box"><strong>Your notes</strong><br />${notes}</div>
+            <div class="note-box"><strong>Expert notes</strong><br />${test.expert}</div>
+          </div>
+        `;
+        analysisPanel.innerHTML = `
+          <h2>Gap Analysis</h2>
+          <ul class="gap-list">
+            ${test.gaps.map(([type, detail]) => `<li><strong>${type}:</strong> ${detail}</li>`).join("")}
+          </ul>
+        `;
+        expertPanel.classList.add("active");
+        analysisPanel.classList.add("active");
+        showFinalResult("Task completed", "1 / 1", "Attempts used", attemptCount);
+        checkButton.disabled = true;
+        document.querySelector("#notesInput").disabled = true;
+      }
+
+      checkButton.addEventListener("click", () => {
+        attemptCount += 1;
+        if (test.mode === "guided") {
+          checkGuided();
+        } else if (test.mode === "outline") {
+          checkOutline();
+        } else {
+          checkSummary();
+        }
+      });
+
+      renderTask();
+    </script>
+  </body>
+</html>
