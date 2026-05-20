@@ -344,21 +344,23 @@
             <p class="eyebrow" id="selectedLevelLabel">Easy level</p>
             <strong>Test 1</strong>
             <span id="selectedTestSummary">Word-by-word dictation with one question.</span>
-            <a class="primary-btn" id="testLink" href="/dictation/test1?level=easy">Open test</a>
+            <a class="primary-btn" id="testLink" href="test1?level=easy">Open test</a>
           </article>
         </div>
       </section>
     </div>
 
+    <script src="../js/site.js"></script>
     <script>
+      const hubPath = LnbSite.moduleUrl("dictation", "");
       if (
-        window.location.pathname === "/dictation" &&
+        window.location.pathname === hubPath &&
         !window.location.pathname.endsWith("/")
       ) {
         history.replaceState(
           null,
           "",
-          `/dictation/${window.location.search}${window.location.hash}`
+          `${hubPath}/${window.location.search}${window.location.hash}`
         );
       }
 
@@ -386,7 +388,7 @@
         const test = testsByLevel[level];
         selectedLevelLabel.textContent = test.label;
         selectedTestSummary.textContent = test.summary;
-        testLink.href = `/dictation/test1?level=${level}`;
+        testLink.href = `test1?level=${level}`;
 
         tabs.forEach((item) => {
           item.classList.toggle("active", item.dataset.level === level);

@@ -557,8 +557,8 @@
 
     <audio id="questionAudio" preload="metadata" playsinline></audio>
 
+    <script src="../../js/site.js"></script>
     <script>
-      // Root-absolute paths so audio works with `serve` (e.g. port 3000) from any page depth.
       const AUDIO_DIRS = {
         easy: "audio/Phoneme discrimination/Easy",
         medium: "audio/Phoneme discrimination/Medium",
@@ -754,26 +754,10 @@
       document.querySelector("#levelLabel").textContent = test.label;
       document.querySelector("#testTitle").textContent = test.title;
 
-      function encodePath(path) {
-        return path
-          .split("/")
-          .filter(Boolean)
-          .map((segment) => encodeURIComponent(segment))
-          .join("/");
-      }
-
-      function getAppBasePath() {
-        const parts = window.location.pathname.split("/").filter(Boolean);
-        const moduleIndex = parts.indexOf("phoneme");
-        if (moduleIndex <= 0) {
-          return "";
-        }
-        return `/${parts.slice(0, moduleIndex).join("/")}`;
-      }
-
       function resolveAudioUrl(filename) {
         const base = AUDIO_DIRS[level] || AUDIO_DIRS.easy;
-        return `${getAppBasePath()}/${encodePath(base)}/${encodeURIComponent(filename)}`;
+        const siteBase = LnbSite.getSiteBasePath();
+        return `${siteBase}/${LnbSite.encodePath(base)}/${encodeURIComponent(filename)}`;
       }
 
       function setAudioSource(filename) {

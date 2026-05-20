@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <script>
+      (function () {
+        var modules = ["phoneme", "dictation", "note-taking"];
+        var path = window.location.pathname;
+        var search = window.location.search || "";
+        var hash = window.location.hash || "";
+
+        if (window.location.hostname.endsWith("github.io")) {
+          for (var i = 0; i < modules.length; i++) {
+            var mod = modules[i];
+            if (path === "/" + mod || path.indexOf("/" + mod + "/") === 0) {
+              window.location.replace("/lnb" + path + search + hash);
+              return;
+            }
+          }
+        }
+
+        if (!/\.[a-z0-9]{2,8}$/i.test(path) && !path.endsWith("/")) {
+          window.location.replace(path + "/index.html" + search + hash);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <p>Redirecting…</p>
+  </body>
+</html>

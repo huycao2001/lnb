@@ -66,26 +66,17 @@ For `dictation/test1/index.html`, the submitted-state action should point to:
 <a class="primary-btn" href="../../dictation.html">Back to tests</a>
 ```
 
-### GitHub Pages Audio Paths
+### GitHub Pages paths
 
-Audio paths should support both local hosting and GitHub Pages under `/lnb`.
+The site is published at `https://<user>.github.io/lnb/`. Module test URLs must include that prefix, for example:
 
-```js
-function getAppBasePath() {
-  const parts = window.location.pathname.split("/").filter(Boolean);
-  const moduleIndex = parts.indexOf("dictation");
-  if (moduleIndex <= 0) {
-    return "";
-  }
-  return `/${parts.slice(0, moduleIndex).join("/")}`;
-}
-```
+`https://<user>.github.io/lnb/dictation/test1?level=easy`
 
-Use it when resolving audio URLs:
+Use relative hub links (`test1?level=easy`) and `js/site.js` for audio and redirects:
 
 ```js
-function resolveAudioUrl(filename) {
-  const base = AUDIO_DIRS[level] || AUDIO_DIRS.easy;
-  return `${getAppBasePath()}/${encodePath(base)}/${encodeURIComponent(filename)}`;
-}
+const siteBase = LnbSite.getSiteBasePath(); // "" locally, "/lnb" on GitHub Pages
+return `${siteBase}/${LnbSite.encodePath(base)}/${encodeURIComponent(filename)}`;
 ```
+
+Root `404.html` redirects mistaken `/dictation/...` URLs (missing `/lnb`) on `github.io`.
