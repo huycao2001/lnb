@@ -401,6 +401,29 @@
         background: #fff1ef;
       }
 
+      .flow-outline h3 {
+        margin: 0 0 16px;
+        font-size: 17px;
+      }
+
+      .flow-step {
+        margin: 0;
+        line-height: 1.85;
+      }
+
+      .flow-arrow {
+        margin: 4px 0 8px;
+        color: var(--brand-dark);
+        font-size: 20px;
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      .flow-step-final {
+        margin-top: 4px;
+        font-weight: 700;
+      }
+
       .actions {
         margin-top: 18px;
         display: flex;
@@ -720,11 +743,74 @@
         },
         medium: {
           label: "Medium level - Test 1",
-          title: "Outlining method",
-          prompt: "Medium note-taking coming soon.",
-          audio: null,
-          ready: "This level will be added soon.",
-          fields: [],
+          type: "flow",
+          title: "Paper outline",
+          prompt:
+            "Listen to the talk and type the missing word(s) that you hear.",
+          audio: "note-taking b1-b2 task 1.mp3",
+          ready:
+            "Play the audio, fill in each blank in the outline, then check your notes.",
+          flowTitle: "How James will write his paper on the Vikings",
+          flowSteps: [
+            {
+              lead: "He'll read a",
+              trail: "and choose his topic.",
+              fieldId: "blank1",
+            },
+            {
+              lead: "He'll borrow a",
+              trail: "from Beth.",
+              fieldId: "blank2",
+            },
+            {
+              lead: "He'll plan the",
+              trail: "of the paper.",
+              fieldId: "blank3",
+            },
+            {
+              lead: "He'll read some source material and write",
+              trail: ".",
+              fieldId: "blank4",
+            },
+            {
+              lead: "He'll write the paper using",
+              trail: ".",
+              fieldId: "blank5",
+            },
+            { text: "He'll write the complete paper." },
+          ],
+          fields: [
+            {
+              id: "blank1",
+              label: "1. Read a … and choose his topic",
+              answerDisplay: "student paper",
+              check: (value) => matchesAny(value, ["student paper"]),
+            },
+            {
+              id: "blank2",
+              label: "2. Borrow a … from Beth",
+              answerDisplay: "documentary",
+              check: (value) => matchesAny(value, ["documentary"]),
+            },
+            {
+              id: "blank3",
+              label: "3. Plan the … of the paper",
+              answerDisplay: "structure",
+              check: (value) => matchesAny(value, ["structure"]),
+            },
+            {
+              id: "blank4",
+              label: "4. Read source material and write …",
+              answerDisplay: "notes",
+              check: (value) => matchesAny(value, ["notes"]),
+            },
+            {
+              id: "blank5",
+              label: "5. Write the paper using …",
+              answerDisplay: "bullet points",
+              check: (value) => matchesAny(value, ["bullet points", "bullet-points"]),
+            },
+          ],
         },
         hard: {
           label: "Hard level - Test 1",
@@ -887,6 +973,36 @@
             <div class="match-rows">
               <h3>Experts</h3>
               ${matchRows}
+            </div>
+          `;
+          return;
+        }
+
+        if (test.type === "flow") {
+          const steps = test.flowSteps
+            .map((step, index) => {
+              if (step.text) {
+                return `<p class="flow-step flow-step-final">${step.text}</p>`;
+              }
+              const arrow =
+                index < test.flowSteps.length - 1
+                  ? '<div class="flow-arrow" aria-hidden="true">↓</div>'
+                  : "";
+              return `
+                <p class="flow-step">
+                  ${step.lead}
+                  <input class="blank-input" id="${step.fieldId}" type="text" aria-label="Blank ${index + 1}" />
+                  ${step.trail}
+                </p>
+                ${arrow}
+              `;
+            })
+            .join("");
+
+          noteForm.innerHTML = `
+            <div class="flow-outline">
+              <h3>${test.flowTitle}</h3>
+              ${steps}
             </div>
           `;
           return;
