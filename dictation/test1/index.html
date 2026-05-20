@@ -341,6 +341,46 @@
         font-size: 22px;
       }
 
+      .answer-key {
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(21, 115, 71, 0.22);
+      }
+
+      .answer-key h3 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+
+      .review-row {
+        padding: 12px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .review-row:first-of-type {
+        border-top: 0;
+        padding-top: 0;
+      }
+
+      .review-row .question-label {
+        display: block;
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 6px;
+      }
+
+      .review-row .your-answer {
+        display: block;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+
+      .review-row .correct-answer {
+        display: block;
+        color: var(--success);
+        font-weight: 800;
+      }
+
       .word {
         padding: 2px 4px;
         border-radius: 4px;
@@ -398,7 +438,7 @@
           <span>Lis n Bliss</span>
         </a>
 
-        <a class="nav-link" href="../../dictation.html">Back to tests</a>
+        <a class="nav-link" href="../">Back to tests</a>
       </header>
 
       <main class="test-panel" aria-label="Dictation test question">
@@ -511,6 +551,13 @@
         hard: {
           label: "Hard level - Test 1",
           title: "Full-speed dictation",
+          questions: [
+            {
+              prompt: "Type thee sentence you hear:___________________",
+              audio: "dictation C1.mp3",
+              answer: "Exhausted from his swim, the bear must regain his strength."
+            }
+          ],
           prompt: "Type the full sentence from the conversation audio.",
           answer: "I thought the presentation was clear and practical",
           ready: "Type the full sentence. Wrong words will be highlighted in red until the sentence is accurate.",
@@ -715,6 +762,24 @@
               <span>Needs review</span>
               <strong>${reviewTotal}</strong>
             </div>
+          </div>
+          <div class="answer-key">
+            <h3>Answer key</h3>
+            ${questions
+              .map((question, index) => {
+                const userAnswer = userAnswers[index].trim() || "(blank)";
+                const isCorrect =
+                  normalize(userAnswers[index]) === normalize(question.answer);
+                return `
+                  <div class="review-row">
+                    <span class="question-label">Question ${index + 1}</span>
+                    <span class="your-answer">Your answer: ${userAnswer}</span>
+                    <span class="correct-answer">Correct answer: ${question.answer}</span>
+                    <span class="your-answer">${isCorrect ? "Status: Correct" : "Status: Incorrect"}</span>
+                  </div>
+                `;
+              })
+              .join("")}
           </div>
         `;
         resultPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });

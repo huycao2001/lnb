@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Note-taking | Lis n Bliss</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #17212f;
+        --muted: #617084;
+        --line: #d9e1ea;
+        --soft: #f5f8fb;
+        --panel: #ffffff;
+        --brand: #146c63;
+        --brand-dark: #0d4f49;
+        --success: #157347;
+        --danger: #b42318;
+        --accent: #d97706;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          linear-gradient(120deg, rgba(20, 108, 99, 0.08), transparent 36%),
+          linear-gradient(300deg, rgba(217, 119, 6, 0.09), transparent 32%),
+          var(--soft);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .shell {
+        width: min(1040px, calc(100% - 40px));
+        margin: 0 auto;
+        padding-bottom: 44px;
+      }
+
+      header {
+        padding: 24px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: var(--brand);
+        box-shadow: 0 10px 24px rgba(20, 108, 99, 0.22);
+      }
+
+      .top-actions,
+      .nav-link,
+      .login-link,
+      .primary-btn {
+        min-height: 42px;
+        padding: 10px 16px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+      }
+
+      .top-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .nav-link {
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .login-link,
+      .primary-btn {
+        border: 1px solid var(--brand);
+        color: #fff;
+        background: var(--brand);
+        cursor: pointer;
+      }
+
+      .login-link:hover,
+      .primary-btn:hover:not(:disabled) {
+        background: var(--brand-dark);
+      }
+
+      .primary-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .intro {
+        padding: 34px 0 26px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+        gap: 32px;
+        align-items: end;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(36px, 5vw, 62px);
+        line-height: 1;
+      }
+
+      h2 {
+        margin: 0 0 10px;
+        font-size: clamp(25px, 3vw, 36px);
+      }
+
+      .intro p,
+      .start-panel p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .streak-box,
+      .start-panel,
+      .test-card,
+      .test-panel,
+      .result-notice,
+      .analysis-panel,
+      .final-panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 16px 46px rgba(24, 33, 47, 0.08);
+      }
+
+      .streak-box,
+      .test-card {
+        padding: 18px;
+      }
+
+      .start-panel {
+        padding: clamp(20px, 4vw, 34px);
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--brand-dark);
+        font-size: 13px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .level-select {
+        display: grid;
+        gap: 18px;
+      }
+
+      .level-tabs,
+      .test-list {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .level-tab {
+        min-height: 72px;
+        padding: 12px 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.76);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .level-tab strong,
+      .level-tab span,
+      .test-card strong,
+      .test-card span {
+        display: block;
+      }
+
+      .level-tab span,
+      .test-card span {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .level-tab.active {
+        border-color: rgba(20, 108, 99, 0.45);
+        background: #eef8f6;
+        box-shadow: inset 0 0 0 1px rgba(20, 108, 99, 0.18);
+      }
+
+      .test-card strong {
+        font-size: 20px;
+      }
+
+      .test-card span {
+        margin-bottom: 18px;
+      }
+
+      .test-panel {
+        padding: clamp(20px, 4vw, 34px);
+      }
+
+      .progress {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .audio-zone {
+        margin-top: 26px;
+        padding: 18px;
+        border: 1px solid rgba(20, 108, 99, 0.18);
+        border-radius: 8px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 16px;
+        align-items: center;
+        background: #f3fbf9;
+      }
+
+      .icon-btn {
+        width: 52px;
+        height: 52px;
+        border: 0;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: var(--brand);
+        cursor: pointer;
+      }
+
+      .wave {
+        height: 42px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .wave span {
+        width: 7px;
+        border-radius: 999px;
+        background: rgba(20, 108, 99, 0.62);
+      }
+
+      .wave.playing span {
+        animation: pulse 0.55s ease-in-out infinite alternate;
+      }
+
+      @keyframes pulse {
+        from {
+          height: 14px;
+        }
+        to {
+          height: 38px;
+        }
+      }
+
+      .replay {
+        min-height: 42px;
+        padding: 10px 14px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .prompt {
+        margin: 28px 0 16px;
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .note-form {
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        line-height: 2;
+      }
+
+      .note-form p {
+        margin: 0 0 10px;
+      }
+
+      .note-form .static {
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      .blank-input {
+        min-width: 140px;
+        max-width: 100%;
+        padding: 6px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        vertical-align: middle;
+      }
+
+      .blank-input.correct {
+        border-color: rgba(21, 115, 71, 0.45);
+        background: #effaf3;
+      }
+
+      .blank-input.wrong {
+        border-color: rgba(180, 35, 24, 0.45);
+        background: #fff1ef;
+      }
+
+      .actions {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .result-notice {
+        margin-top: 18px;
+        padding: 18px 20px;
+        min-height: 72px;
+      }
+
+      .result-notice strong {
+        display: block;
+        font-size: 20px;
+        margin-bottom: 6px;
+      }
+
+      .result-notice span {
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .result-notice.is-correct {
+        border-color: var(--success);
+        background: #effaf3;
+      }
+
+      .result-notice.is-correct strong {
+        color: var(--success);
+      }
+
+      .result-notice.is-wrong {
+        border-color: var(--danger);
+        background: #fff1ef;
+      }
+
+      .result-notice.is-wrong strong {
+        color: var(--danger);
+      }
+
+      .result-notice.is-ready {
+        border-color: rgba(20, 108, 99, 0.35);
+        background: #f3fbf9;
+      }
+
+      .analysis-panel,
+      .final-panel {
+        margin-top: 18px;
+        padding: 16px;
+        display: none;
+      }
+
+      .analysis-panel.active,
+      .final-panel.active {
+        display: block;
+      }
+
+      .final-panel {
+        border-color: rgba(21, 115, 71, 0.35);
+        background: #effaf3;
+      }
+
+      .score-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+        padding: 10px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .score-row:first-of-type {
+        border-top: 0;
+      }
+
+      .score-row span {
+        color: var(--muted);
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .summary-stat {
+        padding: 12px;
+        border: 1px solid rgba(21, 115, 71, 0.22);
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .summary-stat span,
+      .summary-stat strong {
+        display: block;
+      }
+
+      .summary-stat span {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .summary-stat strong {
+        margin-top: 4px;
+        font-size: 22px;
+      }
+
+      .answer-key {
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(21, 115, 71, 0.22);
+      }
+
+      .answer-key h3 {
+        margin: 0 0 12px;
+        font-size: 18px;
+      }
+
+      .answer-key-row {
+        padding: 12px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .answer-key-row:first-of-type {
+        border-top: 0;
+        padding-top: 0;
+      }
+
+      .answer-key-row .field-label {
+        display: block;
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 6px;
+      }
+
+      .answer-key-row .your-answer {
+        display: block;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+
+      .answer-key-row .correct-answer {
+        display: block;
+        color: var(--success);
+        font-weight: 800;
+      }
+
+      .hub-view[hidden],
+      .test-view[hidden],
+      #questionActions[hidden],
+      #submittedActions[hidden] {
+        display: none !important;
+      }
+
+      @media (max-width: 900px) {
+        .intro,
+        .level-tabs,
+        .test-list,
+        .summary-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .shell {
+          width: min(100% - 28px, 1040px);
+        }
+
+        header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .audio-zone {
+          grid-template-columns: auto minmax(0, 1fr);
+        }
+
+        .replay {
+          grid-column: 1 / -1;
+        }
+
+        .blank-input {
+          display: block;
+          width: 100%;
+          margin: 6px 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <a class="brand" href="../index.html" aria-label="Lis n Bliss home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M5 10v4M9 7v10M13 4v16M17 8v8M21 11v2"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </span>
+          <span>Lis n Bliss</span>
+        </a>
+
+        <div class="top-actions" id="headerActions">
+          <a class="nav-link" href="../index.html">Home</a>
+          <a class="login-link" href="../login.html">Log in</a>
+        </div>
+      </header>
+
+      <section class="hub-view" id="hubView">
+        <section class="intro">
+          <div>
+            <h1>Note-taking</h1>
+            <p>
+              Practice working memory and information synthesis by turning spoken
+              input into structured notes.
+            </p>
+          </div>
+          <aside class="streak-box">
+            <strong>Synthesis practice</strong>
+            <span>Fill guided notes from audio, then check and submit your test.</span>
+          </aside>
+        </section>
+
+        <section class="level-select">
+          <div class="start-panel">
+            <p class="eyebrow">Module C</p>
+            <h2>Choose your note-taking level.</h2>
+            <p>Each level opens Test 1 at a clean URL with the level in the query string.</p>
+          </div>
+
+          <nav class="level-tabs" aria-label="Note-taking difficulty levels">
+            <button class="level-tab active" type="button" data-level="easy">
+              <strong>Easy</strong>
+              <span>A1-A2 guided note-filling</span>
+            </button>
+            <button class="level-tab" type="button" data-level="medium">
+              <strong>Medium</strong>
+              <span>B1-B2 outlining</span>
+            </button>
+            <button class="level-tab" type="button" data-level="hard">
+              <strong>Hard</strong>
+              <span>C1 matching and synthesis</span>
+            </button>
+          </nav>
+
+          <div class="test-list">
+            <article class="test-card">
+              <p class="eyebrow" id="selectedLevelLabel">Easy level</p>
+              <strong>Test 1</strong>
+              <span id="selectedTestSummary">Office relocation guided notes (6 blanks).</span>
+              <a class="primary-btn" id="testLink" href="/note-taking?level=easy">Open test</a>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <section class="test-view" id="testView" hidden>
+        <main class="test-panel" aria-label="Note-taking test">
+          <p class="eyebrow" id="levelLabel">Easy level - Test 1</p>
+          <h1 id="testTitle">Guided note-filling</h1>
+          <p class="progress" id="progressText">Question 1 of 1</p>
+
+          <div class="audio-zone">
+            <button class="icon-btn" type="button" id="playButton" aria-label="Play audio">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M8 5v14l11-7L8 5Z" fill="currentColor" />
+              </svg>
+            </button>
+            <div class="wave" id="wave" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <button class="replay" type="button" id="replayButton">Replay audio</button>
+          </div>
+
+          <p class="prompt" id="promptText">
+            Listen to the talk and type the words that you hear.
+          </p>
+
+          <div class="note-form" id="noteForm"></div>
+
+          <div class="actions" id="questionActions">
+            <button class="primary-btn" type="button" id="checkButton">Check notes</button>
+            <button class="primary-btn" type="button" id="submitTestButton">Submit test</button>
+          </div>
+
+          <div class="actions" id="submittedActions" hidden>
+            <a class="primary-btn" href="/note-taking">Back to tests</a>
+          </div>
+
+          <div class="result-notice is-ready" id="resultPanel" role="status" aria-live="polite">
+            <strong id="feedbackTitle">Ready to listen</strong>
+            <span id="feedbackText">Play the audio, fill in the blanks, then check your notes.</span>
+          </div>
+
+          <div class="analysis-panel" id="analysisPanel" aria-live="polite"></div>
+          <div class="final-panel" id="finalPanel" aria-live="polite"></div>
+        </main>
+      </section>
+    </div>
+
+    <audio id="questionAudio" preload="metadata" playsinline></audio>
+
+    <script>
+      const AUDIO_DIRS = {
+        easy: "audio/Note-taking/easy",
+        medium: "audio/Note-taking/medium",
+        hard: "audio/Note-taking/hard",
+      };
+
+      const tests = {
+        easy: {
+          label: "Easy level - Test 1",
+          title: "Guided note-filling",
+          prompt: "Listen to the talk and type the words that you hear.",
+          audio: "note-taking a1-a2 task 1.MP3",
+          ready: "Play the audio, fill in the blanks, then check your notes.",
+          fields: [
+            {
+              id: "blank1",
+              label: "1. Preferred location",
+              answerDisplay: "City centre / City center",
+              check: (value) => matchesAny(value, ["city centre", "city center"]),
+            },
+            {
+              id: "blank2",
+              label: "2. Near",
+              answerDisplay: "Transport centre / Transport center",
+              check: (value) => matchesAny(value, ["transport centre", "transport center"]),
+            },
+            {
+              id: "blank3",
+              label: "3. Size",
+              answerDisplay: "12,000 sq m / 12,000 square metres / 12,000 m2",
+              check: (value) => matchesSize(value),
+            },
+            {
+              id: "blank4",
+              label: "4. Number of staff",
+              answerDisplay: "Forty / 40",
+              check: (value) => matchesAny(value, ["forty", "40"]),
+            },
+            {
+              id: "blank5",
+              label: "5. Special needs (blank)",
+              answerDisplay: "Wheelchair",
+              check: (value) => matchesAny(value, ["wheelchair"]),
+            },
+            {
+              id: "blank6",
+              label: "6. Moving date (month)",
+              answerDisplay: "July",
+              check: (value) => matchesAny(value, ["july"]),
+            },
+          ],
+        },
+        medium: {
+          label: "Medium level - Test 1",
+          title: "Outlining method",
+          prompt: "Medium note-taking coming soon.",
+          audio: null,
+          ready: "This level will be added soon.",
+          fields: [],
+        },
+        hard: {
+          label: "Hard level - Test 1",
+          title: "Synthetic summary",
+          prompt: "Hard note-taking coming soon.",
+          audio: null,
+          ready: "This level will be added soon.",
+          fields: [],
+        },
+      };
+
+      const urlParams = new URLSearchParams(window.location.search);
+      if (
+        window.location.pathname === "/note-taking" &&
+        !window.location.pathname.endsWith("/")
+      ) {
+        history.replaceState(
+          null,
+          "",
+          `/note-taking/${window.location.search}${window.location.hash}`
+        );
+      }
+
+      const showTest = urlParams.has("level");
+      const level = tests[urlParams.get("level")] ? urlParams.get("level") : "easy";
+      const test = tests[level];
+      const hubView = document.querySelector("#hubView");
+      const testView = document.querySelector("#testView");
+      const noteForm = document.querySelector("#noteForm");
+      const checkButton = document.querySelector("#checkButton");
+      const submitTestButton = document.querySelector("#submitTestButton");
+      const questionActions = document.querySelector("#questionActions");
+      const submittedActions = document.querySelector("#submittedActions");
+      const feedbackTitle = document.querySelector("#feedbackTitle");
+      const feedbackText = document.querySelector("#feedbackText");
+      const resultPanel = document.querySelector("#resultPanel");
+      const analysisPanel = document.querySelector("#analysisPanel");
+      const finalPanel = document.querySelector("#finalPanel");
+      const playButton = document.querySelector("#playButton");
+      const replayButton = document.querySelector("#replayButton");
+      const questionAudio = document.querySelector("#questionAudio");
+      const wave = document.querySelector("#wave");
+
+      let attemptCount = 0;
+      let testSubmitted = false;
+
+      function normalize(value) {
+        return value
+          .trim()
+          .toLowerCase()
+          .replace(/[.,!?]/g, "")
+          .replace(/\s+/g, " ");
+      }
+
+      function matchesAny(value, acceptable) {
+        const normalized = normalize(value);
+        return acceptable.some((item) => normalize(item) === normalized);
+      }
+
+      function matchesSize(value) {
+        const normalized = normalize(value).replace(/,/g, "");
+        const patterns = [
+          /^12000$/,
+          /^12000\s*sq\s*m$/,
+          /^12000\s*sq\s*metres?$/,
+          /^12000\s*sq\s*meters?$/,
+          /^12000\s*square\s*metres?$/,
+          /^12000\s*square\s*meters?$/,
+          /^12000\s*m2$/,
+        ];
+        return patterns.some((pattern) => pattern.test(normalized));
+      }
+
+      function encodePath(path) {
+        return path
+          .split("/")
+          .filter(Boolean)
+          .map((segment) => encodeURIComponent(segment))
+          .join("/");
+      }
+
+      function getAppBasePath() {
+        const parts = window.location.pathname.split("/").filter(Boolean);
+        const moduleIndex = parts.indexOf("note-taking");
+        if (moduleIndex <= 0) {
+          return "";
+        }
+        return `/${parts.slice(0, moduleIndex).join("/")}`;
+      }
+
+      function resolveAudioUrl(filename) {
+        const base = AUDIO_DIRS[level] || AUDIO_DIRS.easy;
+        return `${getAppBasePath()}/${encodePath(base)}/${encodeURIComponent(filename)}`;
+      }
+
+      function setResultPanel(state, title, message) {
+        resultPanel.classList.remove("is-ready", "is-correct", "is-wrong");
+        if (state) {
+          resultPanel.classList.add(state);
+        }
+        feedbackTitle.textContent = title;
+        feedbackText.textContent = message;
+      }
+
+      function renderNoteForm() {
+        noteForm.innerHTML = `
+          <p><span class="static">Name:</span> Mr R. Rich</p>
+          <p><span class="static">Company:</span> ICT Industries</p>
+          <p>
+            <span class="static">Preferred location:</span>
+            <input class="blank-input" id="blank1" type="text" aria-label="Preferred location" />
+          </p>
+          <p>
+            <span class="static">Near:</span>
+            <input class="blank-input" id="blank2" type="text" aria-label="Near" />
+          </p>
+          <p>
+            <span class="static">Size:</span>
+            <input class="blank-input" id="blank3" type="text" aria-label="Size" />
+          </p>
+          <p>
+            <span class="static">Number of staff:</span>
+            <input class="blank-input" id="blank4" type="text" aria-label="Number of staff" />
+          </p>
+          <p>
+            <span class="static">Special needs:</span>
+            <input class="blank-input" id="blank5" type="text" aria-label="Special needs" />
+            access parking for mobility scooter
+          </p>
+          <p>
+            <span class="static">Moving date:</span>
+            during month of
+            <input class="blank-input" id="blank6" type="text" aria-label="Moving date month" />
+          </p>
+        `;
+      }
+
+      function evaluateFields() {
+        return test.fields.map((field) => {
+          const input = document.querySelector(`#${field.id}`);
+          const value = input ? input.value : "";
+          const correct = field.check(value);
+          return { ...field, value, correct };
+        });
+      }
+
+      function applyFieldStyles(results) {
+        results.forEach((item) => {
+          const input = document.querySelector(`#${item.id}`);
+          if (!input) return;
+          input.classList.remove("correct", "wrong");
+          if (!item.value.trim()) return;
+          input.classList.add(item.correct ? "correct" : "wrong");
+        });
+      }
+
+      function checkNotes() {
+        if (testSubmitted || !test.fields.length) return;
+
+        attemptCount += 1;
+        const results = evaluateFields();
+        const correctCount = results.filter((item) => item.correct).length;
+        const answeredCount = results.filter((item) => item.value.trim()).length;
+
+        applyFieldStyles(results);
+
+        analysisPanel.innerHTML = results
+          .map(
+            (item) => `
+              <div class="score-row">
+                <span>${item.label}${item.correct ? "" : " — needs review"}</span>
+                <strong>${item.correct ? "Correct" : "Incorrect"}</strong>
+              </div>
+            `
+          )
+          .join("");
+        analysisPanel.classList.add("active");
+
+        if (correctCount === results.length) {
+          setResultPanel(
+            "is-correct",
+            "All notes correct",
+            "Well done — every blank matches the audio. You can submit the test."
+          );
+          finalPanel.innerHTML = `
+            <h2>Ready to submit</h2>
+            <p>All ${results.length} fields are correct after ${attemptCount} check attempt(s).</p>
+          `;
+          finalPanel.classList.add("active");
+        } else {
+          setResultPanel(
+            "is-wrong",
+            "Keep revising",
+            `${correctCount} of ${results.length} blanks are correct. Fix the red fields and check again.`
+          );
+          finalPanel.classList.remove("active");
+          finalPanel.innerHTML = "";
+        }
+
+        return { results, correctCount, answeredCount };
+      }
+
+      function renderAnswerKey(results) {
+        return `
+          <div class="answer-key">
+            <h3>Answer key</h3>
+            ${results
+              .map(
+                (item) => `
+                  <div class="answer-key-row">
+                    <span class="field-label">${item.label}</span>
+                    <span class="your-answer">Your answer: ${item.value.trim() || "(blank)"}</span>
+                    <span class="correct-answer">Correct answer: ${item.answerDisplay}</span>
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
+        `;
+      }
+
+      function lockTest(summary, results) {
+        testSubmitted = true;
+        questionAudio.pause();
+        playButton.disabled = true;
+        replayButton.disabled = true;
+        questionActions.hidden = true;
+        submittedActions.hidden = false;
+        applyFieldStyles(results);
+        document.querySelectorAll(".blank-input").forEach((input) => {
+          input.disabled = true;
+        });
+
+        analysisPanel.innerHTML = results
+          .map(
+            (item) => `
+              <div class="score-row">
+                <span>${item.label}</span>
+                <strong>${item.correct ? "Correct" : "Incorrect"}</strong>
+              </div>
+            `
+          )
+          .join("");
+        analysisPanel.classList.add("active");
+
+        finalPanel.innerHTML = `
+          <h2>Test submitted</h2>
+          <div class="summary-grid">
+            <div class="summary-stat">
+              <span>Correct answers</span>
+              <strong>${summary.correctCount} / ${summary.total}</strong>
+            </div>
+            <div class="summary-stat">
+              <span>Attempts used</span>
+              <strong>${summary.attemptCount}</strong>
+            </div>
+            <div class="summary-stat">
+              <span>Unanswered</span>
+              <strong>${summary.unanswered}</strong>
+            </div>
+            <div class="summary-stat">
+              <span>Needs review</span>
+              <strong>${summary.needsReview}</strong>
+            </div>
+          </div>
+          ${renderAnswerKey(results)}
+        `;
+        finalPanel.classList.add("active");
+        finalPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        setResultPanel(
+          "is-correct",
+          "Test complete",
+          "Review your answers below and compare them with the answer key."
+        );
+      }
+
+      async function playCurrentAudio() {
+        if (!test.audio || testSubmitted) {
+          setResultPanel("is-ready", "Audio not available", test.ready);
+          return;
+        }
+
+        try {
+          const url = resolveAudioUrl(test.audio);
+          if (questionAudio.dataset.src !== url) {
+            questionAudio.src = url;
+            questionAudio.dataset.src = url;
+            questionAudio.load();
+          }
+          questionAudio.currentTime = 0;
+          await questionAudio.play();
+          setResultPanel(
+            "is-ready",
+            "Playing audio",
+            "Listen carefully, then fill in the blanks."
+          );
+        } catch {
+          setResultPanel(
+            "is-wrong",
+            "Audio could not play",
+            "Use Play or Replay again, or check that the audio file is available."
+          );
+        }
+      }
+
+      function initHub() {
+        const testsByLevel = {
+          easy: { label: "Easy level", summary: "Office relocation guided notes (6 blanks)." },
+          medium: { label: "Medium level", summary: "Outlining method (coming soon)." },
+          hard: { label: "Hard level", summary: "Matching and synthesis (coming soon)." },
+        };
+
+        const tabs = document.querySelectorAll(".level-tab");
+        const selectedLevelLabel = document.querySelector("#selectedLevelLabel");
+        const selectedTestSummary = document.querySelector("#selectedTestSummary");
+        const testLink = document.querySelector("#testLink");
+
+        function selectLevelTab(activeLevel) {
+          const info = testsByLevel[activeLevel];
+          selectedLevelLabel.textContent = info.label;
+          selectedTestSummary.textContent = info.summary;
+          testLink.href = `/note-taking?level=${activeLevel}`;
+          tabs.forEach((tab) => {
+            tab.classList.toggle("active", tab.dataset.level === activeLevel);
+          });
+        }
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", () => selectLevelTab(tab.dataset.level));
+        });
+
+        selectLevelTab(urlParams.get("level") || "easy");
+      }
+
+      function initTest() {
+        hubView.hidden = true;
+        testView.hidden = false;
+
+        document.querySelector("#levelLabel").textContent = test.label;
+        document.querySelector("#testTitle").textContent = test.title;
+        document.querySelector("#promptText").textContent = test.prompt;
+        setResultPanel("is-ready", "Ready to listen", test.ready);
+
+        if (!test.fields.length) {
+          checkButton.disabled = true;
+          submitTestButton.disabled = true;
+          noteForm.innerHTML = "<p>This level is not available yet. Choose Easy from the hub.</p>";
+          return;
+        }
+
+        renderNoteForm();
+
+        if (test.audio) {
+          const url = resolveAudioUrl(test.audio);
+          questionAudio.src = url;
+          questionAudio.dataset.src = url;
+          questionAudio.load();
+        }
+
+        checkButton.addEventListener("click", checkNotes);
+
+        submitTestButton.addEventListener("click", () => {
+          if (testSubmitted) return;
+
+          const results = evaluateFields();
+          const correctCount = results.filter((item) => item.correct).length;
+          const unanswered = results.filter((item) => !item.value.trim()).length;
+
+          lockTest(
+            {
+              correctCount,
+              total: results.length,
+              attemptCount,
+              unanswered,
+              needsReview: results.length - correctCount,
+            },
+            results
+          );
+        });
+
+        playButton.addEventListener("click", playCurrentAudio);
+        replayButton.addEventListener("click", playCurrentAudio);
+        questionAudio.addEventListener("play", () => wave.classList.add("playing"));
+        questionAudio.addEventListener("pause", () => wave.classList.remove("playing"));
+        questionAudio.addEventListener("ended", () => wave.classList.remove("playing"));
+      }
+
+      if (showTest) {
+        if (!tests[urlParams.get("level")]) {
+          window.location.replace("/note-taking?level=easy");
+        } else {
+          initTest();
+        }
+      } else {
+        initHub();
+      }
+    </script>
+  </body>
+</html>
