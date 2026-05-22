@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About us | Lis n Bliss</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #17212f;
+        --muted: #617084;
+        --line: #d9e1ea;
+        --soft: #f5f8fb;
+        --panel: #ffffff;
+        --brand: #146c63;
+        --brand-dark: #0d4f49;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          linear-gradient(120deg, rgba(20, 108, 99, 0.08), transparent 36%),
+          linear-gradient(300deg, rgba(217, 119, 6, 0.1), transparent 32%),
+          var(--soft);
+      }
+
+      .shell {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 24px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--ink);
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: var(--brand);
+        box-shadow: 0 10px 24px rgba(20, 108, 99, 0.22);
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .about-link,
+      .login-link {
+        min-height: 42px;
+        padding: 10px 18px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .about-link {
+        color: var(--ink);
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .about-link:hover {
+        background: #fff;
+      }
+
+      .about-link[aria-current="page"] {
+        border-color: rgba(20, 108, 99, 0.45);
+        background: #eef8f6;
+        color: var(--brand-dark);
+      }
+
+      .login-link {
+        min-width: 92px;
+        color: #fff;
+        background: var(--brand);
+      }
+
+      .login-link:hover {
+        background: var(--brand-dark);
+      }
+
+      main {
+        width: min(820px, calc(100% - 40px));
+        margin: 0 auto;
+        flex: 1;
+        padding: 20px 0 72px;
+      }
+
+      .about-panel {
+        padding: clamp(28px, 5vw, 48px);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 16px 46px rgba(24, 33, 47, 0.08);
+      }
+
+      .about-panel h1 {
+        margin: 0 0 28px;
+        font-size: clamp(32px, 5vw, 48px);
+        font-weight: 900;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+      }
+
+      .about-panel p {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.75;
+      }
+
+      .about-panel p:last-child {
+        margin-bottom: 0;
+      }
+
+      .about-panel .lead {
+        color: var(--ink);
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      @media (max-width: 520px) {
+        header,
+        main {
+          width: min(100% - 28px, 1180px);
+        }
+
+        .top-actions {
+          gap: 8px;
+        }
+
+        .about-link,
+        .login-link {
+          padding-inline: 14px;
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <a class="brand" href="index.html" aria-label="Lis n Bliss home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M5 10v4M9 7v10M13 4v16M17 8v8M21 11v2"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </span>
+          <span>Lis n Bliss</span>
+        </a>
+
+        <div class="top-actions">
+          <a class="about-link" href="about.html" aria-current="page">About us</a>
+          <a class="login-link" href="login.html">Log in</a>
+        </div>
+      </header>
+
+      <main>
+        <article class="about-panel">
+          <h1>What is “Lis n Bliss”?</h1>
+          <p class="lead">
+            Lis n Bliss is a fun and easy listening app that helps users improve their
+            English listening skills through different kinds of exercises.
+          </p>
+          <p>How? The easiest way to understand is to jump in and play!</p>
+          <p>
+            The app is designed based on important cognitive processes in language
+            learning. Many learners find listening difficult because they need to hear,
+            remember, and understand information at the same time. According to
+            Baddeley’s Working Memory Model, the brain can become overloaded when
+            processing too much sound information at once. Learners may also struggle
+            with processing speed, attention control, and predicting meaning from
+            context, which can make it hard to follow real-time speech.
+          </p>
+          <p>
+            To support these challenges, Lis n Bliss provides simple, interactive, and
+            enjoyable activities that help users focus better, build listening confidence,
+            and improve understanding step by step in a friendly learning environment.
+          </p>
+        </article>
+      </main>
+    </div>
+  </body>
+</html>
